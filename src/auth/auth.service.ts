@@ -1,30 +1,60 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, BadRequestException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
 
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { User } from 'src/users/entities/user.entity';
+import * as bcrypt from 'bcrypt';
+import { ulid } from 'ulid';
+
 @Injectable()
 export class AuthService {
   constructor(
+    @InjectRepository(User) private readonly userRepository: Repository<User>,
     private readonly jwtService: JwtService,
   ) {}
 
-  async login(dto: LoginDto) {
-    const payload = { sub: 'user_id_simulado', email: dto.email };
+  public async login(dto: LoginDto) {
+    const user = await this.userRepository.findOneBy({ correo: dto.email });
+    if (!user) throw new BadRequestException('Credenciales inválidas');
+
+    const valid = await bcrypt.compare(dto.password, user.contraseña);
+    if (!valid) throw new BadRequestException('Credenciales inválidas');
+
+    const payload = {
+      sub: user.usuarioulid,
+      correo: user.correo,
+      nombre: user.nombrecompleto,
+    };
+
+    const token = await this.jwtService.signAsync(payload);
 
     return {
-      access_token: this.jwtService.sign(payload),
+      accessToken: token,
+      user: payload,
     };
   }
 
-  async register(dto: RegisterDto) {
-    // Aquí deberías guardar al nuevo usuario en la base de datos
-    return {
-      message: 'Usuario registrado correctamente (simulado)',
-      user: {
-        name: dto.name,
-        email: dto.email,
-      },
-    };
+  public async register(dto: RegisterDto): Promise<any> {
+    const exists = await this.userRepository.findOneBy({ correo: dto.correo });
+    if(exists) throw new BadRequestException('Correo ya registrado');
+
+    //HASHEAMOS LA CONTRASEÑA
+    const hashedPassword = await bcrypt.hash(dto.contraseña, 10);
+
+    const user = this.userRepository.create({
+      nombrecompleto: dto.nombrecompleto,
+      correo: dto.correo,
+      contraseña: hashedPassword,
+      suspendido: false,
+      fechasuspension: '',
+      fecha_ultimocambio: new Date(),
+      fecha_sync: new Date().toISOString(),
+    });
+
+    return await this.userRepository.save(user);
   }
+
 }

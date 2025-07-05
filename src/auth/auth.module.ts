@@ -5,11 +5,11 @@ import { PassportModule } from '@nestjs/passport';
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { JwtStrategy } from './strategies/jwt.strategy';
-//import { UsersModule } from '../users/users.module';
+import { UsersModule } from 'src/users/users.module';
 
 @Module({
   imports: [
-    //UsersModule,
+    UsersModule,
     PassportModule,
     JwtModule.register({
       secret: 'jwt_secreto', // ⚠️ Luego lo moveremos a config/env
