@@ -17,10 +17,10 @@ export class AuthService {
   ) {}
 
   public async login(dto: LoginDto) {
-    const user = await this.userRepository.findOneBy({ correo: dto.email });
+    const user = await this.userRepository.findOneBy({ correo: dto.correo });
     if (!user) throw new BadRequestException('Credenciales inválidas');
 
-    const valid = await bcrypt.compare(dto.password, user.contraseña);
+    const valid = await bcrypt.compare(dto.contraseña, user.contraseña);
     if (!valid) throw new BadRequestException('Credenciales inválidas');
 
     const payload = {
@@ -29,10 +29,16 @@ export class AuthService {
       nombre: user.nombrecompleto,
     };
 
-    const token = await this.jwtService.signAsync(payload);
+    const token = await this.jwtService.signAsync(payload, {
+      expiresIn: '8h'
+    });
+    const refresToken = await this.jwtService.signAsync(payload, {
+      expiresIn: '7d'
+    })
 
     return {
       accessToken: token,
+      refresToken,
       user: payload,
     };
   }
@@ -47,9 +53,11 @@ export class AuthService {
     const user = this.userRepository.create({
       nombrecompleto: dto.nombrecompleto,
       correo: dto.correo,
+      usuario: dto.usuario,
       contraseña: hashedPassword,
+      pin: dto.pin,
+      esadministrador: false,
       suspendido: false,
-      fechasuspension: '',
       fecha_ultimocambio: new Date(),
       fecha_sync: new Date().toISOString(),
     });

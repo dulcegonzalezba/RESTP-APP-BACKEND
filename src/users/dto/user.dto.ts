@@ -6,6 +6,7 @@ import {
   Length,
   IsDateString,
   IsDate,
+  ValidateIf,
 } from 'class-validator';
 
 export class CreateUserDto {
@@ -27,10 +28,12 @@ export class CreateUserDto {
   pin: string;
 
   @IsString()
-  celular: string;
+  @IsOptional()
+  celular?: string;
 
+  @IsOptional()
   @IsString()
-  puesto: string;
+  puesto?: string;
 
   @IsBoolean()
   esadministrador: boolean;
@@ -45,5 +48,5 @@ export class CreateUserDto {
 
   @IsOptional()
   @IsDate()
-  fechasuspension?: Date;
+  fechasuspension?: Date | null;
 }

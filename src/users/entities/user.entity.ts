@@ -21,10 +21,10 @@ export class User {
   @Column()
   pin: string;
   
-  @Column()
+  @Column({nullable: true})
   celular: string;
 
-  @Column()
+  @Column({nullable: true})
   puesto: string;
 
   @Column()
@@ -33,7 +33,7 @@ export class User {
   @Column()
   suspendido: boolean;
 
-  @Column()
+  @Column({ type: 'timestamp', nullable: true})
   fechasuspension: Date;
 
   @Column()
@@ -42,10 +42,10 @@ export class User {
   @Column()
   fecha_sync: string;
 
-  @Column()
+  @Column({nullable: true})
   usuario2ulid: string;
 
-  @Column()
+  @Column({nullable: true})
   empresaulid: string;
 
   @BeforeInsert()
