@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
+import { ProductosModule } from './productos/productos.module';
 
 @Module({
   imports: [
@@ -14,7 +15,7 @@ import { UsersModule } from './users/users.module';
         type: 'postgres',
         url: config.get<string>('DATABASE_URL'),
         autoLoadEntities: true,
-        synchronize: config.get('NODE_ENV') !== 'production',
+        synchronize: false,
         ssl: {
           rejectUnauthorized: false,
         },
@@ -22,7 +23,8 @@ import { UsersModule } from './users/users.module';
     }),
     //MODULOS DE CADA ENTIDAD A PARTIR DE AQUÍ
     AuthModule,
-    UsersModule
+    UsersModule,
+    ProductosModule
   ],
 })
 export class AppModule {}

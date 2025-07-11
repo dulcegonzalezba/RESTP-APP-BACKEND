@@ -1,6 +1,6 @@
 // productos/dto/create-producto.dto.ts
 
-export class ProductoDto {
+export class CreateProductoDto {
   productoulid: string;
   grupoproductoulid: string;
   subgrupoproductoulid: string;
