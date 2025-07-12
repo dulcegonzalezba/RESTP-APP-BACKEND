@@ -5,26 +5,27 @@ import { RegisterDto } from './dto/register.dto';
 
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { User } from 'src/users/entities/user.entity';
+import { Cliente } from 'src/clientes/entities/cliente.entity';
 import * as bcrypt from 'bcrypt';
 import { ulid } from 'ulid';
 
 @Injectable()
 export class AuthService {
   constructor(
-    @InjectRepository(User) private readonly userRepository: Repository<User>,
+    @InjectRepository(Cliente) 
+    private readonly clienteRepository: Repository<Cliente>,
     private readonly jwtService: JwtService,
   ) {}
 
   public async login(dto: LoginDto) {
-    const user = await this.userRepository.findOneBy({ correo: dto.correo });
+    const user = await this.clienteRepository.findOneBy({ correo: dto.correo });
     if (!user) throw new BadRequestException('Credenciales inválidas');
 
-    const valid = await bcrypt.compare(dto.contraseña, user.contraseña);
+    const valid = await bcrypt.compare(dto.contraseña, user.contraseña??'');
     if (!valid) throw new BadRequestException('Credenciales inválidas');
 
     const payload = {
-      sub: user.usuarioulid,
+      sub: user.clienteulid,
       correo: user.correo,
       nombre: user.nombrecompleto,
     };
@@ -44,13 +45,13 @@ export class AuthService {
   }
 
   public async register(dto: RegisterDto): Promise<any> {
-    const exists = await this.userRepository.findOneBy({ correo: dto.correo });
+    const exists = await this.clienteRepository.findOneBy({ correo: dto.correo });
     if(exists) throw new BadRequestException('Correo ya registrado');
 
     //HASHEAMOS LA CONTRASEÑA
     const hashedPassword = await bcrypt.hash(dto.contraseña, 10);
 
-    const user = this.userRepository.create({
+    const user = this.clienteRepository.create({
       nombrecompleto: dto.nombrecompleto,
       correo: dto.correo,
       usuario: dto.usuario,
@@ -62,7 +63,7 @@ export class AuthService {
       fecha_sync: new Date().toISOString(),
     });
 
-    return await this.userRepository.save(user);
+    return await this.clienteRepository.save(user);
   }
 
 }

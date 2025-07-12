@@ -2,12 +2,10 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
-import { UsersModule } from './users/users.module';
+import { ClientesModule } from './clientes/clientes.module';
 import { ProductosModule } from './productos/productos.module';
 import { MesasModule } from './mesas/mesas.module';
 import { ReservacionesModule } from './reservaciones/reservaciones.module';
-import { ReportesModule } from './reportes/reportes.module';
-import { ClientesModule } from './clientes/clientes.module';
 
 @Module({
   imports: [
@@ -27,12 +25,10 @@ import { ClientesModule } from './clientes/clientes.module';
     }),
     //MODULOS DE CADA ENTIDAD A PARTIR DE AQUÍ
     AuthModule,
-    UsersModule,
+    ClientesModule,
     ProductosModule,
     MesasModule,
-    ReservacionesModule,
-    ReportesModule,
-    ClientesModule
+    ReservacionesModule
   ],
 })
 export class AppModule {}
