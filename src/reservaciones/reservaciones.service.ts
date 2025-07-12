@@ -1,26 +1,36 @@
 import { Injectable } from '@nestjs/common';
-import { CreateReservacioneDto } from './dto/create-reservacione.dto';
-import { UpdateReservacioneDto } from './dto/update-reservacione.dto';
+import { CreateReservacionDto } from './dto/create-reservacione.dto';
+import { UpdateReservacionDto } from './dto/update-reservacione.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Reservacion } from './entities/reservacione.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class ReservacionesService {
-  create(createReservacioneDto: CreateReservacioneDto) {
-    return 'This action adds a new reservacione';
+  constructor(
+    @InjectRepository(Reservacion)
+    private readonly reservacionRepository: Repository<Reservacion>,
+  ) {}
+  
+  public create(createReservacionDto: CreateReservacionDto) {
+    const reservacion = this.reservacionRepository.create(createReservacionDto);
+    return this.reservacionRepository.save(reservacion);
   }
 
-  findAll() {
-    return `This action returns all reservaciones`;
+  public findAll() {
+    return this.reservacionRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} reservacione`;
+  public findOne(id: string) {
+    return this.reservacionRepository.findOneBy({ reservacionulid: id });
   }
 
-  update(id: number, updateReservacioneDto: UpdateReservacioneDto) {
-    return `This action updates a #${id} reservacione`;
+  public async update(id: string, updateReservacionDto: UpdateReservacionDto): Promise<Reservacion | null> {
+    await this.reservacionRepository.update(id, updateReservacionDto);
+    return this.reservacionRepository.findOneBy({ reservacionulid: id });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} reservacione`;
+  public async remove(id: string): Promise<void> {
+    await this.reservacionRepository.delete(id);
   }
 }
