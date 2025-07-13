@@ -1,99 +1,97 @@
-// productos/entities/producto.entity.ts
-
 import { Entity, PrimaryColumn, Column } from 'typeorm';
 
 @Entity('productos')
 export class Producto {
-  @PrimaryColumn()
-  productoulid: string;
+  @PrimaryColumn({ name: 'productoulid' })
+  ProductoULID: string;
 
-  @Column()
-  grupoproductoulid: string;
+  @Column({ name: 'grupoproductoulid', nullable: true })
+  GrupoProductoULID?: string;
 
-  @Column()
-  subgrupoproductoulid: string;
+  @Column({ name: 'subgrupoproductoulid', nullable: true })
+  SubgrupoProductoULID?: string;
 
-  @Column()
-  claveproducto: string;
+  @Column({ name: 'claveproducto' })
+  ClaveProducto: string;
 
-  @Column()
-  tipoproducto: string; // podrías usar @Column({ type: 'enum', enum: TipoProducto }) si defines un enum
+  @Column({ name: 'tipoproducto' })
+  TipoProducto: string;
 
-  @Column()
-  nombredelproducto: string;
+  @Column({ name: 'nombredelproducto' })
+  Nombredelproducto: string;
 
-  @Column()
-  favorito: boolean;
+  @Column({ name: 'favorito' })
+  Favorito: boolean;
 
-  @Column({ type: 'text' })
-  descripcion: string;
+  @Column({ name: 'descripcion', type: 'text' })
+  Descripcion: string;
 
-  @Column()
-  exentoimpuesto: boolean;
+  @Column({ name: 'exentoimpuesto' })
+  ExentoImpuesto: boolean;
 
-  @Column()
-  precioabierto: boolean;
+  @Column({ name: 'precioabierto' })
+  PrecioAbierto: boolean;
 
-  @Column()
-  unidadesulid: string;
+  @Column({ name: 'unidadesulid', nullable: true })
+  UnidadesULID?: string;
 
-  @Column()
-  areaproduccionulid: string;
+  @Column({ name: 'areaproduccionulid', nullable: true })
+  AreaProduccionULID?: string;
 
-  @Column()
-  almacenulid: string;
+  @Column({ name: 'almacenulid', nullable: true })
+  AlmacenULID?: string;
 
-  @Column()
-  controlstock: boolean;
+  @Column({ name: 'controlstock' })
+  ControlStock: boolean;
 
-  @Column()
-  precioxutilidad: boolean;
+  @Column({ name: 'precioxutilidadad' })
+  PrecioxUtilidadad: boolean;
 
-  @Column()
-  facturable: boolean;
+  @Column({ name: 'facturable' })
+  Facturable: boolean;
 
-  @Column()
-  clavetributaria: string;
+  @Column({ name: 'clavetributaria', nullable: true })
+  ClaveTributaria?: string;
 
-  @Column()
-  suspendido: boolean;
+  @Column({ name: 'suspendido' })
+  Suspendido: boolean;
 
-  @Column()
-  comedor: boolean;
+  @Column({ name: 'comedor' })
+  Comedor: boolean;
 
-  @Column()
-  adomicilio: boolean;
+  @Column({ name: 'adomicilio' })
+  ADomicilio: boolean;
 
-  @Column()
-  mostrador: boolean;
+  @Column({ name: 'mostrador' })
+  Mostrador: boolean;
 
-  @Column()
-  enlinea: boolean;
+  @Column({ name: 'enlinea' })
+  Enlinea: boolean;
 
-  @Column()
-  enapp: boolean;
+  @Column({ name: 'enapp' })
+  EnAPP: boolean;
 
-  @Column()
-  canalesventa: boolean;
+  @Column({ name: 'enmenuqr' })
+  EnMenuQR: boolean;
 
-  @Column()
-  enmenuqr: boolean;
+  @Column({ name: 'clasificacionqrulid', nullable: true })
+  ClasificacionQRULID?: string;
 
-  @Column()
-  clasificacionqrulid: string;
+  @Column({ name: 'datosdinamicos', type: 'json', nullable: true })
+  DatosDinamicos?: Record<string, any>;
 
-  @Column({ type: 'json' })
-  datosdinamicos: any;
+  @Column({ name: 'fecha_ultimocambio', type: 'timestamp' })
+  Fecha_UltimoCambio: Date;
 
-  @Column({ type: 'timestamp' })
-  fecha_ultimocambio: Date;
+  @Column({ name: 'fecha_sync', type: 'timestamp' })
+  Fecha_Sync: Date;
 
-  @Column({ type: 'timestamp' })
-  fecha_sync: Date;
+  @Column({ name: 'usuarioulid' })
+  UsuarioULID: string;
 
-  @Column()
-  usuarioulid: string;
+  @Column({ name: 'empresaulid' })
+  EmpresaULID: string;
 
-  @Column()
-  empresaulid: string;
+  @Column({ name: 'canalesventa' })
+  CanalesVenta: boolean;
 }

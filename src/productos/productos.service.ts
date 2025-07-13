@@ -22,7 +22,7 @@ export class ProductosService {
 
   // Obtener producto por ID
   findOne(id: string): Promise<Producto | null> {
-    return this.productoRepository.findOneBy({ productoulid: id });
+    return this.productoRepository.findOneBy({ ProductoULID: id });
   }
 
   // Crear producto
@@ -33,7 +33,7 @@ export class ProductosService {
 
   async update(id: string, updateProductoDto: UpdateProductoDto): Promise<Producto | null> {
     await this.productoRepository.update(id, updateProductoDto);
-    return this.productoRepository.findOneBy({ productoulid: id });
+    return this.productoRepository.findOneBy({ ProductoULID: id });
   }
 
   // Eliminar producto
