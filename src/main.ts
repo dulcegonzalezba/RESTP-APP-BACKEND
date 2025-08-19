@@ -6,7 +6,6 @@ if (!(global as any).crypto) {
   (global as any).crypto = require('crypto');
 }
 
-
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.useGlobalPipes(new ValidationPipe())

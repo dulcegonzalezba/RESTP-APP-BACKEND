@@ -21,14 +21,14 @@ import { ReservacionesModule } from './reservaciones/reservaciones.module';
         ssl: {
           rejectUnauthorized: false,
         },
-      })
+      }),
     }),
     //MODULOS DE CADA ENTIDAD A PARTIR DE AQUÍ
     AuthModule,
     ClientesModule,
     ProductosModule,
     MesasModule,
-    ReservacionesModule
+    ReservacionesModule,
   ],
 })
 export class AppModule {}
