@@ -15,20 +15,24 @@ import { ReservacionesModule } from './reservaciones/reservaciones.module';
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({
         type: 'postgres',
-        url: config.get<string>('DATABASE_URL'),
+        host: config.get<string>('DB_HOST'),
+        port: config.get<number>('DB_PORT'),
+        username: config.get<string>('DB_USERNAME'),
+        password: config.get<string>('DB_PASSWORD'),
+        database: config.get<string>('DB_NAME'),
         autoLoadEntities: true,
         synchronize: false,
         ssl: {
           rejectUnauthorized: false,
         },
-      })
+      }),
     }),
     //MODULOS DE CADA ENTIDAD A PARTIR DE AQUÍ
     AuthModule,
     ClientesModule,
     ProductosModule,
     MesasModule,
-    ReservacionesModule
+    ReservacionesModule,
   ],
 })
 export class AppModule {}
