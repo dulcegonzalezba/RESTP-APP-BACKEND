@@ -4,7 +4,12 @@ import { PassportModule } from '@nestjs/passport';
 
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
+import { SystemAuthController } from './controllers/system-auth.controller';
+import { SystemAuthService } from './services/system-auth.service';
+import { MockDataService } from './services/mock-data.service';
 import { JwtStrategy } from './strategies/jwt.strategy';
+import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { RolesGuard } from './guards/roles.guard';
 import { ClientesModule } from 'src/clientes/clientes.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -30,8 +35,15 @@ import { Cliente } from 'src/clientes/entities/cliente.entity';
       })
     }),
   ],
-  controllers: [AuthController],
-  providers: [AuthService, JwtStrategy],
-  exports: [AuthService],
+  controllers: [AuthController, SystemAuthController],
+  providers: [
+    AuthService, 
+    SystemAuthService,
+    MockDataService,
+    JwtStrategy,
+    JwtAuthGuard,
+    RolesGuard
+  ],
+  exports: [AuthService, SystemAuthService, MockDataService, JwtAuthGuard],
 })
 export class AuthModule {}

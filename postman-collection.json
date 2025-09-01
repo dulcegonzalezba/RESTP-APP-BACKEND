@@ -1,0 +1,490 @@
+{
+  "info": {
+    "name": "Sistema Autenticación Restaurantes",
+    "description": "Colección para probar el sistema de autenticación con roles por restaurante y sucursal",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Login Super Admin",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Login successful\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('accessToken');",
+                  "    ",
+                  "    // Guardar el token en variables",
+                  "    pm.collectionVariables.set(\"token\", jsonData.accessToken);",
+                  "    ",
+                  "    console.log(\"Token guardado para Super Admin\");",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@sistema.com\",\n  \"password\": \"123456\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/system-auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["system-auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "Login Restaurant Admin",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Login successful\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('accessToken');",
+                  "    ",
+                  "    pm.collectionVariables.set(\"token\", jsonData.accessToken);",
+                  "    console.log(\"Token guardado para Restaurant Admin\");",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"juan@casadelsabor.com\",\n  \"password\": \"123456\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/system-auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["system-auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "Login Branch Admin",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Login successful\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('accessToken');",
+                  "    ",
+                  "    pm.collectionVariables.set(\"token\", jsonData.accessToken);",
+                  "    console.log(\"Token guardado para Branch Admin\");",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"maria@casadelsabor.com\",\n  \"password\": \"123456\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/system-auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["system-auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "Login Waiter",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Login successful\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('accessToken');",
+                  "    ",
+                  "    pm.collectionVariables.set(\"token\", jsonData.accessToken);",
+                  "    console.log(\"Token guardado para Waiter\");",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"carlos@casadelsabor.com\",\n  \"password\": \"123456\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/system-auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["system-auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "Refresh Token",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refreshToken\": \"YOUR_REFRESH_TOKEN_HERE\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/system-auth/refresh",
+              "host": ["{{baseUrl}}"],
+              "path": ["system-auth", "refresh"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "User Profile",
+      "item": [
+        {
+          "name": "Get Profile",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Profile retrieved successfully\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('nombre');",
+                  "    pm.expect(jsonData).to.have.property('email');",
+                  "    pm.expect(jsonData).to.have.property('rol');",
+                  "    ",
+                  "    console.log(\"Usuario:\", jsonData.nombre);",
+                  "    console.log(\"Rol:\", jsonData.rol);",
+                  "    console.log(\"Email:\", jsonData.email);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/system-auth/profile",
+              "host": ["{{baseUrl}}"],
+              "path": ["system-auth", "profile"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "User Management",
+      "item": [
+        {
+          "name": "Get All Users",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Users list retrieved\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.be.an('array');",
+                  "    ",
+                  "    console.log(\"Total usuarios:\", jsonData.length);",
+                  "    jsonData.forEach(user => {",
+                  "        console.log(`- ${user.nombre} (${user.rol})`);",
+                  "    });",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/system-auth/usuarios",
+              "host": ["{{baseUrl}}"],
+              "path": ["system-auth", "usuarios"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Restaurant Management",
+      "item": [
+        {
+          "name": "Get All Restaurants",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Restaurants list retrieved\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.be.an('array');",
+                  "    ",
+                  "    console.log(\"Total restaurantes:\", jsonData.length);",
+                  "    jsonData.forEach(restaurant => {",
+                  "        console.log(`- ${restaurant.nombre}`);",
+                  "    });",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/system-auth/restaurantes",
+              "host": ["{{baseUrl}}"],
+              "path": ["system-auth", "restaurantes"]
+            }
+          }
+        },
+        {
+          "name": "Get My Restaurant",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"My restaurant retrieved\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('nombre');",
+                  "    ",
+                  "    console.log(\"Mi restaurante:\", jsonData.nombre);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/system-auth/mi-restaurante",
+              "host": ["{{baseUrl}}"],
+              "path": ["system-auth", "mi-restaurante"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Branch Management",
+      "item": [
+        {
+          "name": "Get All Branches",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Branches list retrieved\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.be.an('array');",
+                  "    ",
+                  "    console.log(\"Total sucursales:\", jsonData.length);",
+                  "    jsonData.forEach(branch => {",
+                  "        console.log(`- ${branch.nombre} (${branch.direccion})`);",
+                  "    });",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/system-auth/sucursales",
+              "host": ["{{baseUrl}}"],
+              "path": ["system-auth", "sucursales"]
+            }
+          }
+        },
+        {
+          "name": "Get My Branch",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"My branch retrieved\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('nombre');",
+                  "    ",
+                  "    console.log(\"Mi sucursal:\", jsonData.nombre);",
+                  "    console.log(\"Dirección:\", jsonData.direccion);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/system-auth/mi-sucursal",
+              "host": ["{{baseUrl}}"],
+              "path": ["system-auth", "mi-sucursal"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Client Auth (Original System)",
+      "item": [
+        {
+          "name": "Client Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"correo\": \"cliente@test.com\",\n  \"contraseña\": \"123456\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "Client Register",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombrecompleto\": \"Cliente de Prueba\",\n  \"usuario\": \"clientetest\",\n  \"correo\": \"cliente@test.com\",\n  \"pin\": \"1234\",\n  \"contraseña\": \"123456\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/register",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "register"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
