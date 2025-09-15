@@ -2,7 +2,7 @@
 
 ## 🔗 **Base URL**
 ```
-http://localhost:3000/auth
+http://localhost:3010/system-auth
 ```
 
 ---
@@ -11,7 +11,7 @@ http://localhost:3000/auth
 
 ### **Endpoint:**
 ```http
-POST /auth/login
+POST /system-auth/login
 ```
 
 ### **Request Body:**
@@ -54,7 +54,7 @@ POST /auth/login
 
 ### **Endpoint:**
 ```http
-POST /auth/register
+POST /system-auth/register
 ```
 
 ### **Request Body:**
@@ -95,7 +95,7 @@ POST /auth/register
 
 ### **Endpoint:**
 ```http
-POST /auth/refresh
+POST /system-auth/refresh
 ```
 
 ### **Request Body:**
@@ -148,41 +148,73 @@ const headers = {
 
 ## 👥 **5. USUARIOS DE PRUEBA**
 
+> ⚠️ **IMPORTANTE**: Estos usuarios deben crearse usando el endpoint `POST /auth/register` antes de poder hacer login.
+
 ```json
 {
   "usuariosPrueba": [
     {
       "correo": "admin@bellavista.com",
-      "contraseña": "admin123",
+      "contraseña": "admin123", 
       "nombre": "Juan Carlos García López",
-      "tipo": "Administrador"
+      "usuario": "admin",
+      "pin": "1234",
+      "tipo": "Administrador",
+      "esadministrador": true
     },
     {
       "correo": "subgerente@bellavista.com", 
       "contraseña": "subger123",
       "nombre": "María Elena Rodríguez Martínez",
-      "tipo": "Subgerente"
+      "usuario": "subgerente1", 
+      "pin": "2345",
+      "tipo": "Subgerente",
+      "esadministrador": false
     },
     {
       "correo": "cajero1@bellavista.com",
       "contraseña": "cajero123", 
       "nombre": "Pedro Sánchez González",
-      "tipo": "Cajero"
+      "usuario": "cajero1",
+      "pin": "3456", 
+      "tipo": "Cajero",
+      "esadministrador": false
     },
     {
       "correo": "mesero1@bellavista.com",
       "contraseña": "mesero123",
       "nombre": "Ana Torres Hernández", 
-      "tipo": "Mesero"
+      "usuario": "mesero1",
+      "pin": "4567",
+      "tipo": "Mesero",
+      "esadministrador": false
     },
     {
       "correo": "cocinero1@bellavista.com",
       "contraseña": "cocinero123",
       "nombre": "Carlos Mendoza Jiménez",
-      "tipo": "Cocinero"
+      "usuario": "cocinero1",
+      "pin": "5678", 
+      "tipo": "Cocinero",
+      "esadministrador": false
     }
   ]
 }
+```
+
+### **🚀 Crear usuarios de prueba:**
+
+```bash
+# Ejecutar estos comandos para crear los usuarios:
+curl -X POST http://localhost:3010/system-auth/register -H "Content-Type: application/json" -d '{"nombrecompleto":"Juan Carlos García López","usuario":"admin","correo":"admin@bellavista.com","pin":"1234","contraseña":"admin123"}'
+
+curl -X POST http://localhost:3010/system-auth/register -H "Content-Type: application/json" -d '{"nombrecompleto":"María Elena Rodríguez Martínez","usuario":"subgerente1","correo":"subgerente@bellavista.com","pin":"2345","contraseña":"subger123"}'
+
+curl -X POST http://localhost:3010/system-auth/register -H "Content-Type: application/json" -d '{"nombrecompleto":"Pedro Sánchez González","usuario":"cajero1","correo":"cajero1@bellavista.com","pin":"3456","contraseña":"cajero123"}'
+
+curl -X POST http://localhost:3010/system-auth/register -H "Content-Type: application/json" -d '{"nombrecompleto":"Ana Torres Hernández","usuario":"mesero1","correo":"mesero1@bellavista.com","pin":"4567","contraseña":"mesero123"}'
+
+curl -X POST http://localhost:3010/system-auth/register -H "Content-Type: application/json" -d '{"nombrecompleto":"Carlos Mendoza Jiménez","usuario":"cocinero1","correo":"cocinero1@bellavista.com","pin":"5678","contraseña":"cocinero123"}'
 ```
 
 ---
@@ -193,7 +225,7 @@ const headers = {
 
 ```typescript
 class AuthService {
-  private baseURL = 'http://localhost:3000/auth';
+  private baseURL = 'http://localhost:3010/system-auth';
   
   async login(correo: string, contraseña: string) {
     const response = await fetch(`${this.baseURL}/login`, {
