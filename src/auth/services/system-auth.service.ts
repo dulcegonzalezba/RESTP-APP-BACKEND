@@ -1,10 +1,29 @@
-import { Injectable, BadRequestException, UnauthorizedException } from '@nestjs/common';
+/* eslint-disable @typescript-eslint/await-thenable */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+import {
+  Injectable,
+  BadRequestException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { SystemLoginDto } from '../dto/system-login.dto';
 import { MockDataService } from './mock-data.service';
 import { Usuario } from '../entities/user.entity';
 import { Role } from '../enums/role.enum';
 import * as bcrypt from 'bcrypt';
+
+// Interface para el usuario autenticado
+interface AuthenticatedUser {
+  id: string;
+  nombre: string;
+  email: string;
+  rol: Role;
+  restauranteId?: string;
+  sucursalId?: string;
+  permissions: string[];
+}
 
 @Injectable()
 export class SystemAuthService {
@@ -33,7 +52,8 @@ export class SystemAuthService {
     let sucursal: any = null;
 
     if (user.restauranteId) {
-      restaurante = this.mockDataService.findRestauranteById(user.restauranteId) || null;
+      restaurante =
+        this.mockDataService.findRestauranteById(user.restauranteId) || null;
     }
 
     if (user.sucursalId) {
@@ -47,15 +67,15 @@ export class SystemAuthService {
       rol: user.rol,
       restauranteId: user.restauranteId,
       sucursalId: user.sucursalId,
-      permissions: this.getPermissions(user)
+      permissions: this.getPermissions(user),
     };
 
     const accessToken = await this.jwtService.signAsync(payload, {
-      expiresIn: '8h'
+      expiresIn: '8h',
     });
 
     const refreshToken = await this.jwtService.signAsync(payload, {
-      expiresIn: '7d'
+      expiresIn: '7d',
     });
 
     return {
@@ -68,8 +88,8 @@ export class SystemAuthService {
         rol: user.rol,
         restaurante,
         sucursal,
-        permissions: this.getPermissions(user)
-      }
+        permissions: this.getPermissions(user),
+      },
     };
   }
 
@@ -82,7 +102,7 @@ export class SystemAuthService {
     try {
       const payload = await this.jwtService.verifyAsync(token);
       const user = await this.mockDataService.findUserById(payload.sub);
-      
+
       if (!user || !user.activo) {
         throw new UnauthorizedException('Usuario no válido');
       }
@@ -94,15 +114,15 @@ export class SystemAuthService {
         rol: user.rol,
         restauranteId: user.restauranteId,
         sucursalId: user.sucursalId,
-        permissions: this.getPermissions(user)
+        permissions: this.getPermissions(user),
       };
 
       const newAccessToken = await this.jwtService.signAsync(newPayload, {
-        expiresIn: '8h'
+        expiresIn: '8h',
       });
 
       return { accessToken: newAccessToken };
-    } catch (err) {
+    } catch {
       throw new UnauthorizedException('Refresh token inválido o expirado');
     }
   }
@@ -110,7 +130,7 @@ export class SystemAuthService {
   private getPermissions(user: Usuario): string[] {
     const permissions: string[] = [];
 
-    switch (user.rol) {
+    switch (user.rol as Role) {
       case Role.SUPER_ADMIN:
         permissions.push(
           'read:all',
@@ -118,7 +138,7 @@ export class SystemAuthService {
           'delete:all',
           'manage:usuarios',
           'manage:restaurantes',
-          'manage:sucursales'
+          'manage:sucursales',
         );
         break;
 
@@ -128,7 +148,7 @@ export class SystemAuthService {
           'write:restaurante',
           'manage:sucursales',
           'manage:usuarios_sucursal',
-          'read:reportes_restaurante'
+          'read:reportes_restaurante',
         );
         break;
 
@@ -138,7 +158,7 @@ export class SystemAuthService {
           'write:sucursal',
           'manage:mesas',
           'manage:reservaciones',
-          'read:reportes_sucursal'
+          'read:reportes_sucursal',
         );
         break;
 
@@ -147,7 +167,7 @@ export class SystemAuthService {
           'read:mesas',
           'write:pedidos',
           'read:productos',
-          'write:reservaciones'
+          'write:reservaciones',
         );
         break;
 
@@ -155,7 +175,7 @@ export class SystemAuthService {
         permissions.push(
           'read:pedidos',
           'write:pedidos_estado',
-          'read:productos'
+          'read:productos',
         );
         break;
 
@@ -164,7 +184,7 @@ export class SystemAuthService {
           'read:pedidos',
           'write:facturacion',
           'read:productos',
-          'write:pagos'
+          'write:pagos',
         );
         break;
     }
@@ -173,18 +193,24 @@ export class SystemAuthService {
   }
 
   // Métodos de utilidad para verificar permisos
-  hasPermission(user: any, permission: string): boolean {
-    return user.permissions?.includes(permission) || user.permissions?.includes('read:all');
+  hasPermission(user: AuthenticatedUser, permission: string): boolean {
+    return (
+      user.permissions?.includes(permission) ||
+      user.permissions?.includes('read:all')
+    );
   }
 
-  canAccessRestaurante(user: any, restauranteId: string): boolean {
+  canAccessRestaurante(
+    user: AuthenticatedUser,
+    restauranteId: string,
+  ): boolean {
     if (user.rol === Role.SUPER_ADMIN) return true;
     return user.restauranteId === restauranteId;
   }
 
-  canAccessSucursal(user: any, sucursalId: string): boolean {
+  canAccessSucursal(user: AuthenticatedUser, sucursalId: string): boolean {
     if (user.rol === Role.SUPER_ADMIN) return true;
-    
+
     // Si es admin de restaurante, verificar que la sucursal pertenezca a su restaurante
     if (user.rol === Role.RESTAURANTE_ADMIN) {
       const sucursal = this.mockDataService.findSucursalById(sucursalId);

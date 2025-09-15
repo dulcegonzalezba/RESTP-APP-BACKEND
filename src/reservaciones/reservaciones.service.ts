@@ -11,7 +11,7 @@ export class ReservacionesService {
     @InjectRepository(Reservacion)
     private readonly reservacionRepository: Repository<Reservacion>,
   ) {}
-  
+
   public create(createReservacionDto: CreateReservacionDto) {
     const reservacion = this.reservacionRepository.create(createReservacionDto);
     return this.reservacionRepository.save(reservacion);
@@ -25,7 +25,10 @@ export class ReservacionesService {
     return this.reservacionRepository.findOneBy({ reservacionulid: id });
   }
 
-  public async update(id: string, updateReservacionDto: UpdateReservacionDto): Promise<Reservacion | null> {
+  public async update(
+    id: string,
+    updateReservacionDto: UpdateReservacionDto,
+  ): Promise<Reservacion | null> {
     await this.reservacionRepository.update(id, updateReservacionDto);
     return this.reservacionRepository.findOneBy({ reservacionulid: id });
   }

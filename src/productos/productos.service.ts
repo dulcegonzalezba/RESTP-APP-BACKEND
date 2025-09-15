@@ -1,4 +1,3 @@
-import { UpdateClienteDto } from './../clientes/dto/update-cliente.dto';
 // productos.service.ts
 
 import { Injectable } from '@nestjs/common';
@@ -31,7 +30,10 @@ export class ProductosService {
     return this.productoRepository.save(producto);
   }
 
-  async update(id: string, updateProductoDto: UpdateProductoDto): Promise<Producto | null> {
+  async update(
+    id: string,
+    updateProductoDto: UpdateProductoDto,
+  ): Promise<Producto | null> {
     await this.productoRepository.update(id, updateProductoDto);
     return this.productoRepository.findOneBy({ ProductoULID: id });
   }

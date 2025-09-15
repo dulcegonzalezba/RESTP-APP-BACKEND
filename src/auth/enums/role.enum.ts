@@ -4,5 +4,5 @@ export enum Role {
   SUCURSAL_ADMIN = 'sucursal_admin',
   MESERO = 'mesero',
   COCINERO = 'cocinero',
-  CAJERO = 'cajero'
+  CAJERO = 'cajero',
 }

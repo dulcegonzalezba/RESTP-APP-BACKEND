@@ -12,4 +12,3 @@ export class CreateMesaDto {
   usuarioulid?: string;
   empresaulid?: string;
 }
-

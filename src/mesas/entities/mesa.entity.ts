@@ -22,10 +22,18 @@ export class Mesa {
   @Column({ type: 'int', nullable: true })
   comensalesmaximos?: number;
 
-  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', nullable: true })
+  @Column({
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP',
+    nullable: true,
+  })
   fecha_ultimocambio?: Date;
 
-  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', nullable: true })
+  @Column({
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP',
+    nullable: true,
+  })
   fecha_sync?: Date;
 
   @Column({ nullable: true })

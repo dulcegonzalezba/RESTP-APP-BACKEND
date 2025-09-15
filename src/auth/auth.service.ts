@@ -12,7 +12,7 @@ import { ulid } from 'ulid';
 @Injectable()
 export class AuthService {
   constructor(
-    @InjectRepository(Cliente) 
+    @InjectRepository(Cliente)
     private readonly clienteRepository: Repository<Cliente>,
     private readonly jwtService: JwtService,
   ) {}
@@ -21,7 +21,7 @@ export class AuthService {
     const user = await this.clienteRepository.findOneBy({ correo: dto.correo });
     if (!user) throw new BadRequestException('Credenciales inválidas');
 
-    const valid = await bcrypt.compare(dto.contraseña, user.contraseña??'');
+    const valid = await bcrypt.compare(dto.contraseña, user.contraseña ?? '');
     if (!valid) throw new BadRequestException('Credenciales inválidas');
 
     const payload = {
@@ -31,11 +31,11 @@ export class AuthService {
     };
 
     const token = await this.jwtService.signAsync(payload, {
-      expiresIn: '8h'
+      expiresIn: '8h',
     });
     const refresToken = await this.jwtService.signAsync(payload, {
-      expiresIn: '7d'
-    })
+      expiresIn: '7d',
+    });
 
     return {
       accessToken: token,
@@ -45,8 +45,10 @@ export class AuthService {
   }
 
   public async register(dto: RegisterDto): Promise<any> {
-    const exists = await this.clienteRepository.findOneBy({ correo: dto.correo });
-    if(exists) throw new BadRequestException('Correo ya registrado');
+    const exists = await this.clienteRepository.findOneBy({
+      correo: dto.correo,
+    });
+    if (exists) throw new BadRequestException('Correo ya registrado');
 
     //HASHEAMOS LA CONTRASEÑA
     const hashedPassword = await bcrypt.hash(dto.contraseña, 10);
@@ -65,5 +67,4 @@ export class AuthService {
 
     return await this.clienteRepository.save(user);
   }
-
 }

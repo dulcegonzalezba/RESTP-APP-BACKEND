@@ -1,4 +1,10 @@
-import { Controller, Post, Body, BadRequestException, UnauthorizedException } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  BadRequestException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
@@ -8,7 +14,7 @@ import { JwtService } from '@nestjs/jwt';
 export class AuthController {
   constructor(
     private readonly authService: AuthService,
-    private  readonly jwtService: JwtService
+    private readonly jwtService: JwtService,
   ) {}
 
   @Post('login')
@@ -19,7 +25,7 @@ export class AuthController {
   @Post('register')
   async register(@Body() registerDto: RegisterDto) {
     const user = await this.authService.register(registerDto);
-    if(!user) throw new BadRequestException('No se pudo registrar el usuario');
+    if (!user) throw new BadRequestException('No se pudo registrar el usuario');
     return user;
   }
 

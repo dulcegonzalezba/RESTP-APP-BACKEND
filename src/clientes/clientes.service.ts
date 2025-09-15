@@ -7,10 +7,9 @@ import { Cliente } from './entities/cliente.entity';
 
 @Injectable()
 export class ClientesService {
-
   constructor(
-    @InjectRepository(Cliente) 
-    private readonly clienteRepository: Repository<Cliente>
+    @InjectRepository(Cliente)
+    private readonly clienteRepository: Repository<Cliente>,
   ) {}
 
   public create(createClienteDto: CreateClienteDto) {
@@ -26,7 +25,10 @@ export class ClientesService {
     return this.clienteRepository.findOneBy({ clienteulid: id });
   }
 
-  public async update(id: string, updateClienteDto: UpdateClienteDto): Promise<Cliente | null> {
+  public async update(
+    id: string,
+    updateClienteDto: UpdateClienteDto,
+  ): Promise<Cliente | null> {
     await this.clienteRepository.update(id, updateClienteDto);
     return this.clienteRepository.findOneBy({ clienteulid: id });
   }

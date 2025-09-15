@@ -1,11 +1,11 @@
-import { 
-  Controller, 
-  Post, 
-  Body, 
-  Get, 
+import {
+  Controller,
+  Post,
+  Body,
+  Get,
   UseGuards,
-  BadRequestException, 
-  UnauthorizedException 
+  BadRequestException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { SystemAuthService } from '../services/system-auth.service';
 import { MockDataService } from '../services/mock-data.service';
@@ -48,11 +48,14 @@ export class SystemAuthController {
     let sucursal: any = null;
 
     if (userEntity.restauranteId) {
-      restaurante = this.mockDataService.findRestauranteById(userEntity.restauranteId) || null;
+      restaurante =
+        this.mockDataService.findRestauranteById(userEntity.restauranteId) ||
+        null;
     }
 
     if (userEntity.sucursalId) {
-      sucursal = this.mockDataService.findSucursalById(userEntity.sucursalId) || null;
+      sucursal =
+        this.mockDataService.findSucursalById(userEntity.sucursalId) || null;
     }
 
     return {
@@ -62,7 +65,7 @@ export class SystemAuthController {
       rol: userEntity.rol,
       restaurante,
       sucursal,
-      permissions: user.permissions
+      permissions: user.permissions,
     };
   }
 
@@ -72,7 +75,7 @@ export class SystemAuthController {
   async getUsuarios(@CurrentUser() user: any) {
     if (user.rol === Role.SUPER_ADMIN) {
       // Super admin puede ver todos los usuarios
-      return this.mockDataService.getAllUsers().map(u => ({
+      return this.mockDataService.getAllUsers().map((u) => ({
         id: u.id,
         nombre: u.nombre,
         email: u.email,
@@ -80,21 +83,23 @@ export class SystemAuthController {
         restauranteId: u.restauranteId,
         sucursalId: u.sucursalId,
         activo: u.activo,
-        fechaCreacion: u.fechaCreacion
+        fechaCreacion: u.fechaCreacion,
       }));
     } else if (user.rol === Role.RESTAURANTE_ADMIN && user.restauranteId) {
       // Admin de restaurante solo puede ver usuarios de su restaurante
-      return this.mockDataService.getUsersByRestaurante(user.restauranteId).map(u => ({
-        id: u.id,
-        nombre: u.nombre,
-        email: u.email,
-        rol: u.rol,
-        sucursalId: u.sucursalId,
-        activo: u.activo,
-        fechaCreacion: u.fechaCreacion
-      }));
+      return this.mockDataService
+        .getUsersByRestaurante(user.restauranteId)
+        .map((u) => ({
+          id: u.id,
+          nombre: u.nombre,
+          email: u.email,
+          rol: u.rol,
+          sucursalId: u.sucursalId,
+          activo: u.activo,
+          fechaCreacion: u.fechaCreacion,
+        }));
     }
-    
+
     return [];
   }
 
@@ -112,9 +117,11 @@ export class SystemAuthController {
     if (user.rol === Role.SUPER_ADMIN) {
       return this.mockDataService.getAllSucursales();
     } else if (user.rol === Role.RESTAURANTE_ADMIN && user.restauranteId) {
-      return this.mockDataService.getSucursalesByRestaurante(user.restauranteId);
+      return this.mockDataService.getSucursalesByRestaurante(
+        user.restauranteId,
+      );
     }
-    
+
     return [];
   }
 
@@ -125,7 +132,9 @@ export class SystemAuthController {
       throw new BadRequestException('Usuario no asignado a un restaurante');
     }
 
-    const restaurante = this.mockDataService.findRestauranteById(user.restauranteId);
+    const restaurante = this.mockDataService.findRestauranteById(
+      user.restauranteId,
+    );
     if (!restaurante) {
       throw new BadRequestException('Restaurante no encontrado');
     }

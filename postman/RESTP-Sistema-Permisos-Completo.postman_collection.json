@@ -1,0 +1,1322 @@
+{
+	"info": {
+		"_postman_id": "sistema-permisos-unificado-2025",
+		"name": "RESTP - Sistema de Permisos Unificado",
+		"description": "Colección completa para testing del sistema de permisos unificado - Fases 3 y 4\n\n🔐 **Funcionalidades cubiertas:**\n- Autenticación JWT\n- Sistema de permisos granulares\n- Validación de roles jerárquicos  \n- Control de montos límite\n- Auditoría y performance\n- Cache inteligente\n\n📚 **Cómo usar:**\n1. Configurar variables de entorno\n2. Ejecutar login para obtener token\n3. Probar endpoints con diferentes usuarios\n4. Verificar logs de auditoría\n\n⚠️ **Prerequisitos:**\n- Servidor corriendo en localhost:3000\n- Base de datos con datos de prueba\n- Variables configuradas correctamente",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "sistema-permisos"
+	},
+	"item": [
+		{
+			"name": "🔐 Autenticación",
+			"item": [
+				{
+					"name": "Login - Administrador",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Login exitoso\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Token JWT presente\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('access_token');",
+									"    pm.environment.set('jwt_token', jsonData.access_token);",
+									"    pm.environment.set('current_user_id', jsonData.usuario.id);",
+									"});",
+									"",
+									"pm.test(\"Datos de usuario correctos\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.usuario).to.have.property('email');",
+									"    pm.expect(jsonData.usuario).to.have.property('nombreCompleto');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"admin@restaurante.com\",\n  \"password\": \"admin123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					}
+				},
+				{
+					"name": "Login - Gerente",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Login gerente exitoso\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"const jsonData = pm.response.json();",
+									"if (jsonData.access_token) {",
+									"    pm.environment.set('jwt_token_gerente', jsonData.access_token);",
+									"    pm.environment.set('gerente_user_id', jsonData.usuario.id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"gerente@restaurante.com\",\n  \"password\": \"gerente123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					}
+				},
+				{
+					"name": "Login - Empleado",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Login empleado exitoso\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"const jsonData = pm.response.json();",
+									"if (jsonData.access_token) {",
+									"    pm.environment.set('jwt_token_empleado', jsonData.access_token);",
+									"    pm.environment.set('empleado_user_id', jsonData.usuario.id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"empleado@restaurante.com\",\n  \"password\": \"empleado123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					}
+				},
+				{
+					"name": "Verificar Token JWT",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Token válido\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Información de usuario presente\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('sub');",
+									"    pm.expect(jsonData).to.have.property('email');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/auth/profile",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"profile"
+							]
+						}
+					}
+				}
+			],
+			"description": "Endpoints para autenticación y manejo de tokens JWT"
+		},
+		{
+			"name": "🔑 Sistema de Permisos (Fase 3)",
+			"item": [
+				{
+					"name": "Obtener Permisos de Usuario",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Permisos obtenidos exitosamente\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Estructura de permisos correcta\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('usuario');",
+									"    pm.expect(jsonData).to.have.property('permisos');",
+									"    pm.expect(jsonData).to.have.property('limitaciones');",
+									"});",
+									"",
+									"pm.test(\"Permisos es un array\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.permisos).to.be.an('array');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/permisos/usuario",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"permisos",
+								"usuario"
+							]
+						}
+					}
+				},
+				{
+					"name": "Validar Acción - CREAR_USUARIOS (Admin)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Validación exitosa\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Admin tiene permiso CREAR_USUARIOS\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.tienePermiso).to.be.true;",
+									"    pm.expect(jsonData).to.have.property('motivo');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"codigoAccion\": \"CREAR_USUARIOS\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/permisos/validar-accion",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"permisos",
+								"validar-accion"
+							]
+						}
+					}
+				},
+				{
+					"name": "Validar Acción - ELIMINAR_USUARIOS (Empleado)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Validación procesada\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Empleado NO tiene permiso ELIMINAR_USUARIOS\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.tienePermiso).to.be.false;",
+									"    pm.expect(jsonData).to.have.property('motivo');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token_empleado}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"codigoAccion\": \"ELIMINAR_USUARIOS\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/permisos/validar-accion",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"permisos",
+								"validar-accion"
+							]
+						}
+					}
+				},
+				{
+					"name": "Validar Monto Límite - Dentro del límite",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Validación de monto exitosa\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Monto dentro del límite\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.puedeEjecutar).to.be.true;",
+									"    pm.expect(jsonData).to.have.property('limiteMaximo');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"codigoLimite\": \"LIMITE_TRANSACCIONES\",\n  \"monto\": 5000\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/permisos/validar-monto-limite",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"permisos",
+								"validar-monto-limite"
+							]
+						}
+					}
+				},
+				{
+					"name": "Validar Monto Límite - Excede límite",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Validación de monto procesada\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Monto excede límite para empleado\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.puedeEjecutar).to.be.false;",
+									"    pm.expect(jsonData).to.have.property('motivo');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token_empleado}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"codigoLimite\": \"LIMITE_TRANSACCIONES\",\n  \"monto\": 50000\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/permisos/validar-monto-limite",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"permisos",
+								"validar-monto-limite"
+							]
+						}
+					}
+				},
+				{
+					"name": "Asignar Rol a Usuario (Admin)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Asignación de rol exitosa\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Confirmación de asignación\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('mensaje');",
+									"    pm.expect(jsonData.mensaje).to.include('asignado');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"idUsuario\": \"{{empleado_user_id}}\",\n  \"idRol\": \"supervisor-rol-id\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/permisos/asignar-rol",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"permisos",
+								"asignar-rol"
+							]
+						}
+					}
+				}
+			],
+			"description": "Testing completo del sistema de permisos granulares implementado en Fase 3"
+		},
+		{
+			"name": "🛡️ Sistema Seguridad Avanzado (Fase 4)",
+			"item": [
+				{
+					"name": "Dashboard Administrativo",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Dashboard accesible para gerente\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Métricas de dashboard presentes\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('metricas');",
+									"    pm.expect(jsonData.metricas).to.have.property('ventasHoy');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token_gerente}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/admin/dashboard",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"admin",
+								"dashboard"
+							]
+						}
+					}
+				},
+				{
+					"name": "Dashboard - Acceso Denegado (Empleado)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Dashboard denegado para empleado\", function () {",
+									"    pm.response.to.have.status(403);",
+									"});",
+									"",
+									"pm.test(\"Mensaje de error apropiado\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('message');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token_empleado}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/admin/dashboard",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"admin",
+								"dashboard"
+							]
+						}
+					}
+				},
+				{
+					"name": "Crear Usuario (Con Permiso)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Usuario creado exitosamente\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test(\"Datos de usuario retornados\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('id');",
+									"    pm.expect(jsonData).to.have.property('creadoPor');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"nuevo.usuario@test.com\",\n  \"nombreCompleto\": \"Usuario Test\",\n  \"telefono\": \"+521234567890\",\n  \"idEmpresa\": \"empresa-1\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/admin/usuarios",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"admin",
+								"usuarios"
+							]
+						}
+					}
+				},
+				{
+					"name": "Eliminar Usuario (Solo Admin)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Usuario eliminado por admin\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Confirmación de eliminación\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.mensaje).to.include('eliminado');",
+									"    pm.expect(jsonData).to.have.property('eliminadoPor');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/admin/usuarios/usuario-test-id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"admin",
+								"usuarios",
+								"usuario-test-id"
+							]
+						}
+					}
+				},
+				{
+					"name": "Eliminar Usuario - Denegado (Gerente)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Eliminación denegada para gerente\", function () {",
+									"    pm.response.to.have.status(403);",
+									"});",
+									"",
+									"pm.test(\"Mensaje de error de rol\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.message).to.include('nivel de rol');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token_gerente}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/admin/usuarios/usuario-test-id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"admin",
+								"usuarios",
+								"usuario-test-id"
+							]
+						}
+					}
+				},
+				{
+					"name": "Procesar Transacción - Monto Válido",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Transacción procesada\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test(\"ID de transacción generado\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('id');",
+									"    pm.expect(jsonData.id).to.include('TXN-');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"monto\": 7500,\n  \"concepto\": \"Pago de servicios\",\n  \"cliente\": \"Cliente Premium\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/admin/transacciones",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"admin",
+								"transacciones"
+							]
+						}
+					}
+				},
+				{
+					"name": "Procesar Transacción - Monto Excede Límite",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Transacción rechazada por monto\", function () {",
+									"    pm.response.to.have.status(403);",
+									"});",
+									"",
+									"pm.test(\"Mensaje de límite excedido\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.message).to.include('límite');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token_empleado}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"monto\": 75000,\n  \"concepto\": \"Transacción grande\",\n  \"cliente\": \"Cliente VIP\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/admin/transacciones",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"admin",
+								"transacciones"
+							]
+						}
+					}
+				},
+				{
+					"name": "Aprobar Reembolso - Múltiples Validaciones",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Reembolso aprobado exitosamente\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Datos completos de aprobación\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('idReembolso');",
+									"    pm.expect(jsonData).to.have.property('aprobadoPor');",
+									"    pm.expect(jsonData).to.have.property('timestamp');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token_gerente}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"monto\": 2500,\n  \"motivo\": \"Error en facturación\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/admin/reembolsos/RMB-12345/aprobar",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"admin",
+								"reembolsos",
+								"RMB-12345",
+								"aprobar"
+							]
+						}
+					}
+				},
+				{
+					"name": "Ver Logs del Sistema",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Logs obtenidos exitosamente\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Array de logs presente\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('logs');",
+									"    pm.expect(jsonData.logs).to.be.an('array');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/admin/logs?nivel=info&limite=50",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"admin",
+								"logs"
+							],
+							"query": [
+								{
+									"key": "nivel",
+									"value": "info"
+								},
+								{
+									"key": "limite",
+									"value": "50"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Estado Sistema de Permisos",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Estado del sistema obtenido\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Estadísticas de cache presentes\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('estadisticasCache');",
+									"    pm.expect(jsonData.estadisticasCache).to.have.property('entradas');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token_gerente}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/admin/sistema/permisos/estado",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"admin",
+								"sistema",
+								"permisos",
+								"estado"
+							]
+						}
+					}
+				},
+				{
+					"name": "Invalidar Cache de Permisos",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Cache invalidado exitosamente\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Confirmación de invalidación\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.mensaje).to.include('invalidado');",
+									"    pm.expect(jsonData).to.have.property('ejecutadoPor');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/admin/sistema/cache/invalidar",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"admin",
+								"sistema",
+								"cache",
+								"invalidar"
+							]
+						}
+					}
+				}
+			],
+			"description": "Testing avanzado de decoradores, guards e interceptors implementados en Fase 4"
+		},
+		{
+			"name": "📊 Monitoreo y Performance",
+			"item": [
+				{
+					"name": "Performance Test - Múltiples Requests",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response time < 200ms\", function () {",
+									"    pm.expect(pm.response.responseTime).to.be.below(200);",
+									"});",
+									"",
+									"pm.test(\"Permisos validados correctamente\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"// Almacenar tiempo de respuesta para análisis",
+									"const responseTime = pm.response.responseTime;",
+									"pm.globals.set('last_response_time', responseTime);",
+									"",
+									"console.log(`Response time: ${responseTime}ms`);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/permisos/usuario",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"permisos",
+								"usuario"
+							]
+						}
+					}
+				},
+				{
+					"name": "Cache Hit Test",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Segunda consulta más rápida (cache hit)\", function () {",
+									"    const currentTime = pm.response.responseTime;",
+									"    const previousTime = pm.globals.get('last_response_time');",
+									"    ",
+									"    if (previousTime) {",
+									"        console.log(`Previous: ${previousTime}ms, Current: ${currentTime}ms`);",
+									"        // La segunda consulta debería ser más rápida debido al cache",
+									"        pm.expect(currentTime).to.be.below(previousTime + 50);",
+									"    }",
+									"});",
+									"",
+									"pm.test(\"Datos consistentes desde cache\", function () {",
+									"    pm.response.to.have.status(200);",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('permisos');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/permisos/usuario",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"permisos",
+								"usuario"
+							]
+						}
+					}
+				}
+			],
+			"description": "Tests de performance, cache y monitoreo del sistema"
+		},
+		{
+			"name": "🚫 Casos de Error",
+			"item": [
+				{
+					"name": "Sin Token de Autenticación",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Acceso denegado sin token\", function () {",
+									"    pm.response.to.have.status(401);",
+									"});",
+									"",
+									"pm.test(\"Mensaje de unauthorized\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.message).to.include('Unauthorized');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/admin/dashboard",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"admin",
+								"dashboard"
+							]
+						}
+					}
+				},
+				{
+					"name": "Token Inválido",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Token inválido rechazado\", function () {",
+									"    pm.response.to.have.status(401);",
+									"});",
+									"",
+									"pm.test(\"Error de token inválido\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.message).to.include('Unauthorized');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer token.invalido.aqui"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/permisos/usuario",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"permisos",
+								"usuario"
+							]
+						}
+					}
+				},
+				{
+					"name": "Permiso Inexistente",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Validación de permiso inexistente\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Permiso inexistente = false\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.tienePermiso).to.be.false;",
+									"    pm.expect(jsonData.motivo).to.include('no encontrado');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"codigoAccion\": \"PERMISO_INEXISTENTE_TEST\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/permisos/validar-accion",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"permisos",
+								"validar-accion"
+							]
+						}
+					}
+				}
+			],
+			"description": "Testing de casos de error y validaciones de seguridad"
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"// Script global que se ejecuta antes de cada request",
+					"",
+					"// Verificar que las variables de entorno estén configuradas",
+					"if (!pm.environment.get('base_url')) {",
+					"    console.warn('⚠️ Variable base_url no configurada');",
+					"}",
+					"",
+					"// Log del request que se va a ejecutar",
+					"console.log(`🔄 Ejecutando: ${pm.request.method} ${pm.request.url}`);",
+					"",
+					"// Timestamp para medir performance",
+					"pm.globals.set('request_start_time', Date.now());"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"// Script global que se ejecuta después de cada request",
+					"",
+					"// Medir tiempo total de request",
+					"const startTime = pm.globals.get('request_start_time');",
+					"if (startTime) {",
+					"    const totalTime = Date.now() - startTime;",
+					"    console.log(`⏱️ Tiempo total: ${totalTime}ms`);",
+					"}",
+					"",
+					"// Log del resultado",
+					"console.log(`✅ Status: ${pm.response.status} ${pm.response.reason()}`);",
+					"",
+					"// Test global: verificar que el response sea JSON válido cuando sea exitoso",
+					"if (pm.response.status >= 200 && pm.response.status < 300) {",
+					"    pm.test('Response es JSON válido', function () {",
+					"        pm.response.to.be.json;",
+					"    });",
+					"}",
+					"",
+					"// Test global: verificar headers de seguridad básicos",
+					"pm.test('Headers de respuesta presentes', function () {",
+					"    pm.expect(pm.response.headers.get('Content-Type')).to.exist;",
+					"});"
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:3000",
+			"type": "string"
+		},
+		{
+			"key": "jwt_token",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "jwt_token_gerente",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "jwt_token_empleado",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "current_user_id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "gerente_user_id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "empleado_user_id",
+			"value": "",
+			"type": "string"
+		}
+	]
+}
