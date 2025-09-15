@@ -6,7 +6,9 @@ import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { SystemAuthController } from './controllers/system-auth.controller';
 import { AdminAvanzadoController } from './controllers/admin-avanzado.controller';
+import { PermisosController } from './controllers/permisos.controller';
 import { SystemAuthService } from './services/system-auth.service';
+import { PermisosService } from './services/permisos.service';
 import { MockDataService } from './services/mock-data.service';
 import { PermisosCache } from './services/permisos-cache.service';
 import { JwtStrategy } from './strategies/jwt.strategy';
@@ -17,31 +19,39 @@ import { MontoLimiteGuard } from './guards/monto-limite.guard';
 import { RolMinimoGuard } from './guards/rol-minimo.guard';
 import { AuditoriaPermisosInterceptor } from './interceptors/auditoria-permisos.interceptor';
 import { PerformancePermisosInterceptor } from './interceptors/performance-permisos.interceptor';
-import { PermisosModule } from './permisos.module';
 import { ClientesModule } from 'src/clientes/clientes.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Cliente } from 'src/clientes/entities/cliente.entity';
+import { PrismaModule } from '../prisma/prisma.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Cliente]),
     ClientesModule,
-    PermisosModule,
+    PrismaModule,
     PassportModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({
         secret: config.get<string>('JWT_SECRET'),
-        signOptions: { expiresIn: '2h' },
+        // TODO: Cambiar a 365 días en desarrollo (365d)
+        //       y 2 horas en producción `2h`
+        signOptions: { expiresIn: '365d' },
       }),
     }),
   ],
-  controllers: [AuthController, SystemAuthController, AdminAvanzadoController],
+  controllers: [
+    AuthController,
+    SystemAuthController,
+    AdminAvanzadoController,
+    PermisosController,
+  ],
   providers: [
     AuthService,
     SystemAuthService,
+    PermisosService,
     MockDataService,
     PermisosCache,
     JwtStrategy,
@@ -56,6 +66,7 @@ import { Cliente } from 'src/clientes/entities/cliente.entity';
   exports: [
     AuthService,
     SystemAuthService,
+    PermisosService,
     MockDataService,
     PermisosCache,
     JwtAuthGuard,
@@ -64,7 +75,6 @@ import { Cliente } from 'src/clientes/entities/cliente.entity';
     RolMinimoGuard,
     AuditoriaPermisosInterceptor,
     PerformancePermisosInterceptor,
-    PermisosModule,
   ],
 })
 export class AuthModule {}
