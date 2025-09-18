@@ -2,7 +2,7 @@
 	"info": {
 		"_postman_id": "sistema-permisos-unificado-2025",
 		"name": "RESTP - Sistema de Permisos Unificado",
-		"description": "Colección completa para testing del sistema de permisos unificado - Fases 3 y 4\n\n🔐 **Funcionalidades cubiertas:**\n- Autenticación JWT\n- Sistema de permisos granulares\n- Validación de roles jerárquicos  \n- Control de montos límite\n- Auditoría y performance\n- Cache inteligente\n\n📚 **Cómo usar:**\n1. Configurar variables de entorno\n2. Ejecutar login para obtener token\n3. Probar endpoints con diferentes usuarios\n4. Verificar logs de auditoría\n\n⚠️ **Prerequisitos:**\n- Servidor corriendo en localhost:3000\n- Base de datos con datos de prueba\n- Variables configuradas correctamente",
+		"description": "Colección completa para testing del sistema de permisos unificado - Fases 3 y 4\n\n🔐 **Funcionalidades cubiertas:**\n- Autenticación JWT\n- Sistema de permisos granulares\n- Validación de roles jerárquicos  \n- Control de montos límite\n- Auditoría y performance\n- Cache inteligente\n\n📚 **Cómo usar:**\n1. Configurar variables de entorno\n2. Ejecutar login para obtener token\n3. Probar endpoints con diferentes usuarios\n4. Verificar logs de auditoría\n\n⚠️ **Prerequisitos:**\n- Servidor corriendo en localhost:3010\n- Base de datos con datos de prueba\n- Variables configuradas correctamente",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "sistema-permisos"
 	},
@@ -51,7 +51,7 @@
 							"raw": "{\n  \"email\": \"admin@restaurante.com\",\n  \"password\": \"admin123\"\n}"
 						},
 						"url": {
-							"raw": "{{base_url}}/auth/login",
+							"raw": "{{base_url}}/system-auth/login",
 							"host": [
 								"{{base_url}}"
 							],
@@ -96,7 +96,7 @@
 							"raw": "{\n  \"email\": \"gerente@restaurante.com\",\n  \"password\": \"gerente123\"\n}"
 						},
 						"url": {
-							"raw": "{{base_url}}/auth/login",
+							"raw": "{{base_url}}/system-auth/login",
 							"host": [
 								"{{base_url}}"
 							],
@@ -108,20 +108,21 @@
 					}
 				},
 				{
-					"name": "Login - Empleado",
+					"name": "Login - Supervisor Multifuncional",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(\"Login empleado exitoso\", function () {",
+									"pm.test(\"Login supervisor exitoso\", function () {",
 									"    pm.response.to.have.status(200);",
 									"});",
 									"",
 									"const jsonData = pm.response.json();",
 									"if (jsonData.access_token) {",
-									"    pm.environment.set('jwt_token_empleado', jsonData.access_token);",
-									"    pm.environment.set('empleado_user_id', jsonData.usuario.id);",
+									"    pm.environment.set('jwt_token_supervisor', jsonData.access_token);",
+									"    pm.environment.set('supervisor_user_id', jsonData.usuario.id);",
+									"    pm.environment.set('supervisor_roles', JSON.stringify(jsonData.usuario.roles || []));",
 									"}"
 								],
 								"type": "text/javascript"
@@ -138,10 +139,148 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"email\": \"empleado@restaurante.com\",\n  \"password\": \"empleado123\"\n}"
+							"raw": "{\n  \"email\": \"supervisor.multi@bellavista.com\",\n  \"password\": \"test123\"\n}"
 						},
 						"url": {
-							"raw": "{{base_url}}/auth/login",
+							"raw": "{{base_url}}/system-auth/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					}
+				},
+				{
+					"name": "Login - Empleado Polivalente",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Login polivalente exitoso\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"const jsonData = pm.response.json();",
+									"if (jsonData.access_token) {",
+									"    pm.environment.set('jwt_token_polivalente', jsonData.access_token);",
+									"    pm.environment.set('polivalente_user_id', jsonData.usuario.id);",
+									"    pm.environment.set('polivalente_roles', JSON.stringify(jsonData.usuario.roles || []));",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"empleado.polivalente@bellavista.com\",\n  \"password\": \"test123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/system-auth/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					}
+				},
+				{
+					"name": "Login - Gerente de Turno",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Login gerente turno exitoso\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"const jsonData = pm.response.json();",
+									"if (jsonData.access_token) {",
+									"    pm.environment.set('jwt_token_gerente_turno', jsonData.access_token);",
+									"    pm.environment.set('gerente_turno_user_id', jsonData.usuario.id);",
+									"    pm.environment.set('gerente_turno_roles', JSON.stringify(jsonData.usuario.roles || []));",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"gerente.turno@bellavista.com\",\n  \"password\": \"test123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/system-auth/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					}
+				},
+				{
+					"name": "Login - Empleado Temporal",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Login temporal exitoso\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"const jsonData = pm.response.json();",
+									"if (jsonData.access_token) {",
+									"    pm.environment.set('jwt_token_temporal', jsonData.access_token);",
+									"    pm.environment.set('temporal_user_id', jsonData.usuario.id);",
+									"    pm.environment.set('temporal_roles', JSON.stringify(jsonData.usuario.roles || []));",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"empleado.temporal@bellavista.com\",\n  \"password\": \"test123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/system-auth/login",
 							"host": [
 								"{{base_url}}"
 							],
@@ -182,7 +321,7 @@
 							}
 						],
 						"url": {
-							"raw": "{{base_url}}/auth/profile",
+							"raw": "{{base_url}}/system-auth/profile",
 							"host": [
 								"{{base_url}}"
 							],
@@ -195,6 +334,421 @@
 				}
 			],
 			"description": "Endpoints para autenticación y manejo de tokens JWT"
+		},
+		{
+			"name": "👥 Testing Múltiples Roles",
+			"item": [
+				{
+					"name": "Obtener Roles del Supervisor",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Roles obtenidos exitosamente\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Supervisor tiene múltiples roles\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.roles).to.be.an('array');",
+									"    pm.expect(jsonData.roles.length).to.be.greaterThan(1);",
+									"    console.log('Roles del supervisor:', jsonData.roles.map(r => r.nombre));",
+									"});",
+									"",
+									"pm.test(\"Tiene rol principal definido\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    const rolPrincipal = jsonData.roles.find(r => r.esRolPrincipal);",
+									"    pm.expect(rolPrincipal).to.not.be.undefined;",
+									"    pm.environment.set('supervisor_rol_principal', rolPrincipal.idRol);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token_supervisor}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/usuarios/{{supervisor_user_id}}/roles",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"usuarios",
+								"{{supervisor_user_id}}",
+								"roles"
+							]
+						}
+					}
+				},
+				{
+					"name": "Cambiar Rol Activo - Supervisor a Cajero",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Cambio de rol exitoso\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Rol activo actualizado\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('rolActivo');",
+									"    pm.expect(jsonData.rolActivo.codigo).to.equal('rol_cajero');",
+									"    console.log('Nuevo rol activo:', jsonData.rolActivo.nombre);",
+									"});",
+									"",
+									"pm.test(\"Contexto actualizado\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('contexto');",
+									"    pm.expect(jsonData.contexto).to.have.property('area');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token_supervisor}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"idRol\": \"{{supervisor_rol_cajero}}\",\n  \"contexto\": {\n    \"sucursal\": \"sucursal_principal\",\n    \"area\": \"caja\",\n    \"turno\": \"tarde\",\n    \"terminal\": \"TERM001\"\n  }\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/system-auth/cambiar-rol",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"cambiar-rol"
+							]
+						}
+					}
+				},
+				{
+					"name": "Validar Permisos como Cajero",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Validación de permiso exitosa\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Tiene permisos de cajero\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.permitido).to.be.true;",
+									"    pm.expect(jsonData.contexto.rol).to.equal('rol_cajero');",
+									"});",
+									"",
+									"pm.test(\"Limitaciones monetarias aplicadas\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    if (jsonData.limitaciones && jsonData.limitaciones.monetaria) {",
+									"        pm.expect(jsonData.limitaciones.monetaria).to.be.a('number');",
+									"        console.log('Límite monetario:', jsonData.limitaciones.monetaria);",
+									"    }",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token_supervisor}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"accion\": \"abrir_caja\",\n  \"modulo\": \"CAJA\",\n  \"contexto\": {\n    \"monto\": 1000.00,\n    \"sucursal\": \"sucursal_principal\",\n    \"terminal\": \"TERM001\"\n  }\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/permisos/validar",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"permisos",
+								"validar"
+							]
+						}
+					}
+				},
+				{
+					"name": "Cambiar a Rol Mesero",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Cambio a mesero exitoso\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Rol mesero activo\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.rolActivo.codigo).to.equal('rol_mesero');",
+									"});",
+									"",
+									"pm.test(\"Contexto de salón aplicado\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.contexto.area).to.equal('salon');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token_supervisor}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"idRol\": \"{{supervisor_rol_mesero}}\",\n  \"contexto\": {\n    \"sucursal\": \"sucursal_principal\",\n    \"area\": \"salon\",\n    \"turno\": \"tarde\",\n    \"zona\": \"terraza\"\n  }\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/system-auth/cambiar-rol",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"cambiar-rol"
+							]
+						}
+					}
+				},
+				{
+					"name": "Probar Límites como Mesero",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Respuesta de validación recibida\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Límites de mesero aplicados\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    if (!jsonData.permitido) {",
+									"        pm.expect(jsonData.razon).to.include('límite');",
+									"        console.log('Acción denegada:', jsonData.razon);",
+									"    } else {",
+									"        console.log('Acción permitida con límites:', jsonData.limitaciones);",
+									"    }",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token_supervisor}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"accion\": \"aplicar_descuento\",\n  \"modulo\": \"POS\",\n  \"contexto\": {\n    \"monto\": 50.00,\n    \"porcentaje\": 25,\n    \"mesa\": \"M10\"\n  }\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/permisos/validar",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"permisos",
+								"validar"
+							]
+						}
+					}
+				},
+				{
+					"name": "Testing Empleado Polivalente - Listar Roles",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Roles polivalente obtenidos\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Empleado tiene 3 roles\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.roles.length).to.equal(3);",
+									"    const nombreRoles = jsonData.roles.map(r => r.nombre);",
+									"    console.log('Roles polivalente:', nombreRoles);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token_polivalente}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/usuarios/{{polivalente_user_id}}/roles",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"usuarios",
+								"{{polivalente_user_id}}",
+								"roles"
+							]
+						}
+					}
+				},
+				{
+					"name": "Testing Roles Temporales - Empleado Temporal",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Roles temporales obtenidos\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Verificar roles con fechas de vencimiento\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    const rolesTemporales = jsonData.roles.filter(r => r.fechaFin);",
+									"    pm.expect(rolesTemporales.length).to.be.greaterThan(0);",
+									"    ",
+									"    rolesTemporales.forEach(rol => {",
+									"        console.log(`Rol temporal: ${rol.nombre}, Vence: ${rol.fechaFin}`);",
+									"        pm.expect(new Date(rol.fechaFin)).to.be.greaterThan(new Date());",
+									"    });",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token_temporal}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/usuarios/{{temporal_user_id}}/roles",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"usuarios",
+								"{{temporal_user_id}}",
+								"roles"
+							]
+						}
+					}
+				},
+				{
+					"name": "Asignar Nuevo Rol Temporal",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Asignación de rol temporal exitosa\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test(\"Rol temporal configurado correctamente\", function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('fechaInicio');",
+									"    pm.expect(jsonData).to.have.property('fechaFin');",
+									"    pm.expect(jsonData.esRolPrincipal).to.be.false;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token_gerente_turno}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"idUsuario\": \"{{temporal_user_id}}\",\n  \"idRol\": \"{{rol_cajero_id}}\",\n  \"configuracion\": {\n    \"prioridadUsuario\": 4,\n    \"esRolPrincipal\": false,\n    \"sucursalEspecifica\": \"sucursal_principal\",\n    \"areaEspecifica\": \"caja\",\n    \"turnosAsignados\": [\"noche\"],\n    \"fechaInicio\": \"2024-09-18\",\n    \"fechaFin\": \"2024-12-31\",\n    \"limitesPersonalizados\": {\n      \"descuentoMaximo\": 5.0,\n      \"montoMaximoVenta\": 300.00,\n      \"requiereSupervisión\": true\n    }\n  }\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/usuarios/asignar-rol",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"usuarios",
+								"asignar-rol"
+							]
+						}
+					}
+				}
+			],
+			"description": "Testing completo de usuarios con múltiples roles, cambio de contexto y validaciones"
 		},
 		{
 			"name": "🔑 Sistema de Permisos (Fase 3)",
@@ -1285,7 +1839,7 @@
 	"variable": [
 		{
 			"key": "base_url",
-			"value": "http://localhost:3000",
+			"value": "http://localhost:3010",
 			"type": "string"
 		},
 		{

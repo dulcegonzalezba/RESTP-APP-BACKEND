@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
   output   = "../generated/prisma"
@@ -15,20 +9,14 @@ datasource db {
   schemas  = ["global_sistema", "rest_test"]
 }
 
-// =====================================
-// SISTEMA GLOBAL - TABLAS BASE
-// =====================================
-
 model Empresa {
-  id            String      @id @default(cuid()) @map("id_empresa") @db.VarChar(26)
-  codigo        String      @unique @db.VarChar(20)
-  nombre        String      @db.VarChar(200)
-  tipo          TipoEmpresa
-  configuracion Json        @default("{}")
-  activa        Boolean     @default(true)
-  fechaCreacion DateTime    @default(now()) @map("fecha_creacion")
-
-  // Relaciones
+  id             String                @id @default(cuid()) @map("id_empresa") @db.VarChar(26)
+  codigo         String                @unique @db.VarChar(20)
+  nombre         String                @db.VarChar(200)
+  tipo           TipoEmpresa
+  configuracion  Json                  @default("{}")
+  activa         Boolean               @default(true)
+  fechaCreacion  DateTime              @default(now()) @map("fecha_creacion")
   subscripciones EmpresaSubscripcion[]
   usuarios       Usuario[]
 
@@ -38,19 +26,17 @@ model Empresa {
 }
 
 model Horario {
-  id             String       @id @default(cuid()) @map("id_horario") @db.VarChar(26)
-  codigo         String       @unique @db.VarChar(20)
-  nombre         String       @db.VarChar(100)
-  descripcion    String?      @db.VarChar(200)
-  horarioSemanal Json         @map("horario_semanal")
-  tipoHorario    TipoHorario? @map("tipo_horario")
-  aplicaATipo    AplicaTipo?  @map("aplica_a_tipo")
-  activo         Boolean      @default(true)
-  fechaCreacion  DateTime     @default(now()) @map("fecha_creacion")
-
-  // Relaciones
-  usuariosBase           Usuario[]    @relation("HorarioBase")
+  id                     String       @id @default(cuid()) @map("id_horario") @db.VarChar(26)
+  codigo                 String       @unique @db.VarChar(20)
+  nombre                 String       @db.VarChar(100)
+  descripcion            String?      @db.VarChar(200)
+  horarioSemanal         Json         @map("horario_semanal")
+  tipoHorario            TipoHorario? @map("tipo_horario")
+  aplicaATipo            AplicaTipo?  @map("aplica_a_tipo")
+  activo                 Boolean      @default(true)
+  fechaCreacion          DateTime     @default(now()) @map("fecha_creacion")
   usuarioRolesEspecifico UsuarioRol[] @relation("HorarioEspecifico")
+  usuariosBase           Usuario[]    @relation("HorarioBase")
 
   @@index([codigo])
   @@index([tipoHorario, aplicaATipo])
@@ -59,19 +45,17 @@ model Horario {
 }
 
 model Modulo {
-  id                 String  @id @default(cuid()) @map("id_modulo") @db.VarChar(26)
-  codigo             String  @unique @db.VarChar(20)
-  nombre             String  @db.VarChar(100)
-  descripcion        String? @db.VarChar(200)
-  icono              String? @db.VarChar(50)
-  categoria          String? @db.VarChar(50)
-  ordenVisualizacion Int     @default(1) @map("orden_visualizacion")
-  activo             Boolean @default(true)
-
-  // Relaciones
-  acciones        ModuloAccion[]
-  planModulos     PlanModulo[]
-  licenciaModulos LicenciaModulo[]
+  id                 String           @id @default(cuid()) @map("id_modulo") @db.VarChar(26)
+  codigo             String           @unique @db.VarChar(20)
+  nombre             String           @db.VarChar(100)
+  descripcion        String?          @db.VarChar(200)
+  icono              String?          @db.VarChar(50)
+  categoria          String?          @db.VarChar(50)
+  ordenVisualizacion Int              @default(1) @map("orden_visualizacion")
+  activo             Boolean          @default(true)
+  licenciaModulos    LicenciaModulo[]
+  acciones           ModuloAccion[]
+  planModulos        PlanModulo[]
 
   @@index([categoria, ordenVisualizacion])
   @@map("modulos")
@@ -88,11 +72,9 @@ model ModuloAccion {
   nivelCriticidad      NivelCriticidad @default(normal) @map("nivel_criticidad")
   ordenVisualizacion   Int             @default(1) @map("orden_visualizacion")
   activo               Boolean         @default(true)
-
-  // Relaciones
-  modulo         Modulo         @relation(fields: [idModulo], references: [id])
-  permisos       Permiso[]
-  logActividades LogActividad[]
+  modulo               Modulo          @relation(fields: [idModulo], references: [id])
+  logActividades       LogActividad[]
+  permisos             Permiso[]
 
   @@unique([idModulo, codigo])
   @@index([nivelCriticidad])
@@ -101,17 +83,15 @@ model ModuloAccion {
 }
 
 model Plan {
-  id               String  @id @default(cuid()) @map("id_plan") @db.VarChar(26)
-  codigo           String  @unique @db.VarChar(20)
-  nombre           String  @db.VarChar(100)
-  descripcion      String? @db.VarChar(200)
-  precio           Decimal @default(0.00) @db.Decimal(10, 2)
-  tipoOrganizacion String? @map("tipo_organizacion") @db.VarChar(30)
-  activo           Boolean @default(true)
-
-  // Relaciones
-  modulos        PlanModulo[]
-  subscripciones EmpresaSubscripcion[]
+  id               String                @id @default(cuid()) @map("id_plan") @db.VarChar(26)
+  codigo           String                @unique @db.VarChar(20)
+  nombre           String                @db.VarChar(100)
+  descripcion      String?               @db.VarChar(200)
+  precio           Decimal               @default(0.00) @db.Decimal(10, 2)
+  tipoOrganizacion String?               @map("tipo_organizacion") @db.VarChar(30)
+  activo           Boolean               @default(true)
+  subscripciones   EmpresaSubscripcion[]
+  modulos          PlanModulo[]
 
   @@map("planes")
   @@schema("global_sistema")
@@ -123,10 +103,8 @@ model PlanModulo {
   idModulo     String  @map("id_modulo") @db.VarChar(26)
   incluido     Boolean @default(true)
   limitaciones Json    @default("{}")
-
-  // Relaciones
-  plan   Plan   @relation(fields: [idPlan], references: [id])
-  modulo Modulo @relation(fields: [idModulo], references: [id])
+  modulo       Modulo  @relation(fields: [idModulo], references: [id])
+  plan         Plan    @relation(fields: [idPlan], references: [id])
 
   @@map("plan_modulos")
   @@schema("global_sistema")
@@ -140,105 +118,78 @@ model EmpresaSubscripcion {
   fechaVencimiento      DateTime? @map("fecha_vencimiento") @db.Date
   configuracionEspecial Json      @default("{}") @map("configuracion_especial")
   activa                Boolean   @default(true)
-
-  // Relaciones
-  empresa Empresa @relation(fields: [idEmpresa], references: [id])
-  plan    Plan    @relation(fields: [idPlan], references: [id])
+  empresa               Empresa   @relation(fields: [idEmpresa], references: [id])
+  plan                  Plan      @relation(fields: [idPlan], references: [id])
 
   @@map("empresa_subscripciones")
   @@schema("global_sistema")
 }
 
-// =====================================
-// NUEVAS TABLAS DEL SISTEMA DE LICENCIAS
-// =====================================
-
 model Licencia {
-  id                   String @id @default(cuid()) @map("id_licencia") @db.VarChar(26)
-  codigo               String @unique @db.VarChar(20)
-  nombre               String @db.VarChar(100)
-  descripcion          String? @db.VarChar(200)
-  precio               Decimal @default(0.00) @db.Decimal(10, 2)
-  limitacionesGlobales Json @default("{}") @map("limitaciones_globales")
-  activo               Boolean @default(true)
-  fechaCreacion        DateTime @default(now()) @map("fecha_creacion")
-
-  // Relaciones
-  modulos LicenciaModulo[]
+  id                   String           @id @default(cuid()) @map("id_licencia") @db.VarChar(26)
+  codigo               String           @unique @db.VarChar(20)
+  nombre               String           @db.VarChar(100)
+  descripcion          String?          @db.VarChar(200)
+  precio               Decimal          @default(0.00) @db.Decimal(10, 2)
+  limitacionesGlobales Json             @default("{}") @map("limitaciones_globales")
+  activo               Boolean          @default(true)
+  fechaCreacion        DateTime         @default(now()) @map("fecha_creacion")
+  modulos              LicenciaModulo[]
 
   @@map("licencias")
   @@schema("global_sistema")
 }
 
 model LicenciaModulo {
-  id           String @id @default(cuid()) @map("id_licencia_modulo") @db.VarChar(26)
-  idLicencia   String @map("id_licencia") @db.VarChar(26)
-  idModulo     String @map("id_modulo") @db.VarChar(26)
-  incluido     Boolean @default(true)
-  limitaciones Json @default("{}")
-
-  // Relaciones
-  licencia Licencia @relation(fields: [idLicencia], references: [id])
-  modulo   Modulo   @relation(fields: [idModulo], references: [id])
+  id           String   @id @default(cuid()) @map("id_licencia_modulo") @db.VarChar(26)
+  idLicencia   String   @map("id_licencia") @db.VarChar(26)
+  idModulo     String   @map("id_modulo") @db.VarChar(26)
+  incluido     Boolean  @default(true)
+  limitaciones Json     @default("{}")
+  licencia     Licencia @relation(fields: [idLicencia], references: [id])
+  modulo       Modulo   @relation(fields: [idModulo], references: [id])
 
   @@unique([idLicencia, idModulo])
   @@map("licencia_modulos")
   @@schema("global_sistema")
 }
 
-// =====================================
-// ESQUEMA RESTAURANTE (CON SYNC)
-// =====================================
-
 model Usuario {
-  id             String  @id @default(cuid()) @map("id_usuario") @db.VarChar(26)
-  idEmpresa      String  @map("id_empresa") @db.VarChar(26)
-  numeroEmpleado String? @unique @map("numero_empleado") @db.VarChar(20)
-  nombreUsuario  String  @unique @map("nombre_usuario") @db.VarChar(50)
-  email          String  @unique @db.VarChar(100)
-  passwordHash   String  @map("password_hash") @db.VarChar(255)
-
-  // DATOS PERSONALES
-  nombre          String    @db.VarChar(100)
-  apellidoPaterno String    @map("apellido_paterno") @db.VarChar(100)
-  apellidoMaterno String?   @map("apellido_materno") @db.VarChar(100)
-  fechaNacimiento DateTime? @map("fecha_nacimiento") @db.Date
-  telefono        String?   @db.VarChar(15)
-
-  // INFORMACIÓN RESTAURANTE
-  sucursal     String    @db.VarChar(50)
-  area         String?   @db.VarChar(50)
-  puesto       String?   @db.VarChar(100)
-  nivel        String?   @db.VarChar(20)
-  fechaIngreso DateTime? @map("fecha_ingreso") @db.Date
-
-  // CONFIGURACIÓN DE ACCESO
-  idHorarioBase     String  @map("id_horario_base") @db.VarChar(26)
-  idRolPorDefecto   String? @map("id_rol_por_defecto") @db.VarChar(26)
-  turnosDisponibles Json    @default("[]") @map("turnos_disponibles")
-
-  // CONFIGURACIÓN RESTAURANTE
-  accesoEfectivo  Boolean @default(false) @map("acceso_efectivo")
-  nivelAccesoCaja Int     @default(0) @map("nivel_acceso_caja")
-  certificaciones Json    @default("{}") @map("certificaciones")
-
-  // CAMPOS SINCRONIZACIÓN
-  version            BigInt   @default(1)
-  ultimaModificacion DateTime @default(now()) @map("ultima_modificacion")
-  sincronizado       Boolean  @default(true)
-
-  activo        Boolean  @default(true)
-  fechaCreacion DateTime @default(now()) @map("fecha_creacion")
-
-  // Relaciones
+  id                      String               @id @default(cuid()) @map("id_usuario") @db.VarChar(26)
+  idEmpresa               String               @map("id_empresa") @db.VarChar(26)
+  numeroEmpleado          String?              @unique @map("numero_empleado") @db.VarChar(20)
+  nombreUsuario           String               @unique @map("nombre_usuario") @db.VarChar(50)
+  email                   String               @unique @db.VarChar(100)
+  passwordHash            String               @map("password_hash") @db.VarChar(255)
+  nombre                  String               @db.VarChar(100)
+  apellidoPaterno         String               @map("apellido_paterno") @db.VarChar(100)
+  apellidoMaterno         String?              @map("apellido_materno") @db.VarChar(100)
+  fechaNacimiento         DateTime?            @map("fecha_nacimiento") @db.Date
+  telefono                String?              @db.VarChar(15)
+  sucursal                String               @db.VarChar(50)
+  area                    String?              @db.VarChar(50)
+  puesto                  String?              @db.VarChar(100)
+  nivel                   String?              @db.VarChar(20)
+  fechaIngreso            DateTime?            @map("fecha_ingreso") @db.Date
+  idHorarioBase           String               @map("id_horario_base") @db.VarChar(26)
+  idRolPorDefecto         String?              @map("id_rol_por_defecto") @db.VarChar(26)
+  turnosDisponibles       Json                 @default("[]") @map("turnos_disponibles")
+  accesoEfectivo          Boolean              @default(false) @map("acceso_efectivo")
+  nivelAccesoCaja         Int                  @default(0) @map("nivel_acceso_caja")
+  certificaciones         Json                 @default("{}") @map("certificaciones")
+  version                 BigInt               @default(1)
+  ultimaModificacion      DateTime             @default(now()) @map("ultima_modificacion")
+  sincronizado            Boolean              @default(true)
+  activo                  Boolean              @default(true)
+  fechaCreacion           DateTime             @default(now()) @map("fecha_creacion")
+  colaSincronizacion      ColaSincronizacion[]
+  logActividades          LogActividad[]
+  sesiones                Sesion[]
+  autorizacionesOtorgadas UsuarioRol[]         @relation("AutorizadoPor")
+  usuarioRoles            UsuarioRol[]
   empresa                 Empresa              @relation(fields: [idEmpresa], references: [id])
   horarioBase             Horario              @relation("HorarioBase", fields: [idHorarioBase], references: [id])
   rolPorDefecto           Rol?                 @relation("RolPorDefecto", fields: [idRolPorDefecto], references: [id])
-  usuarioRoles            UsuarioRol[]
-  sesiones                Sesion[]
-  logActividades          LogActividad[]
-  colaSincronizacion      ColaSincronizacion[]
-  autorizacionesOtorgadas UsuarioRol[]         @relation("AutorizadoPor")
 
   @@index([sucursal, area, nivel])
   @@index([version, ultimaModificacion])
@@ -248,46 +199,33 @@ model Usuario {
 }
 
 model Rol {
-  id          String  @id @default(cuid()) @map("id_rol") @db.VarChar(26)
-  codigo      String  @unique @db.VarChar(20)
-  nombre      String  @db.VarChar(100)
-  descripcion String? @db.VarChar(200)
-
-  // CLASIFICACIÓN RESTAURANTE
-  categoria String? @db.VarChar(50)
-  area      String? @db.VarChar(50)
-  nivel     String? @db.VarChar(20)
-
-  // PRIORIDAD DEL ROL
-  prioridadOrden     Int     @default(1) @map("prioridad_orden")
-  esRolPrincipal     Boolean @default(false) @map("es_rol_principal")
-  puedeSerPorDefecto Boolean @default(true) @map("puede_ser_por_defecto")
-
-  // PERMISOS ESPECIALES RESTAURANTE
-  accesoEfectivo   Boolean @default(false) @map("acceso_efectivo")
-  limiteDescuento  Decimal @default(0.00) @map("limite_descuento") @db.Decimal(5, 2)
-  puedeAbrirCaja   Boolean @default(false) @map("puede_abrir_caja")
-  puedeCortesParc  Boolean @default(false) @map("puede_cortes_parciales")
-  puedeCortesFinal Boolean @default(false) @map("puede_cortes_final")
-
-  // RESTRICCIONES
-  sucursalesPermitidas Json @default("[]") @map("sucursales_permitidas")
-  turnosPermitidos     Json @default("[]") @map("turnos_permitidos")
-
-  // CAMPOS SINCRONIZACIÓN
-  version            BigInt   @default(1)
-  ultimaModificacion DateTime @default(now()) @map("ultima_modificacion")
-  sincronizado       Boolean  @default(true)
-
-  activo        Boolean  @default(true)
-  fechaCreacion DateTime @default(now()) @map("fecha_creacion")
-
-  // Relaciones
-  usuariosPorDefecto Usuario[]      @relation("RolPorDefecto")
-  usuarioRoles       UsuarioRol[]
-  permisos           Permiso[]
-  sesiones           Sesion[]       @relation("RolActivo")
-  logActividades     LogActividad[]
+  id                   String         @id @default(cuid()) @map("id_rol") @db.VarChar(26)
+  codigo               String         @unique @db.VarChar(20)
+  nombre               String         @db.VarChar(100)
+  descripcion          String?        @db.VarChar(200)
+  categoria            String?        @db.VarChar(50)
+  area                 String?        @db.VarChar(50)
+  nivel                String?        @db.VarChar(20)
+  prioridadOrden       Int            @default(1) @map("prioridad_orden")
+  esRolPrincipal       Boolean        @default(false) @map("es_rol_principal")
+  puedeSerPorDefecto   Boolean        @default(true) @map("puede_ser_por_defecto")
+  accesoEfectivo       Boolean        @default(false) @map("acceso_efectivo")
+  limiteDescuento      Decimal        @default(0.00) @map("limite_descuento") @db.Decimal(5, 2)
+  puedeAbrirCaja       Boolean        @default(false) @map("puede_abrir_caja")
+  puedeCortesParc      Boolean        @default(false) @map("puede_cortes_parciales")
+  puedeCortesFinal     Boolean        @default(false) @map("puede_cortes_final")
+  sucursalesPermitidas Json           @default("[]") @map("sucursales_permitidas")
+  turnosPermitidos     Json           @default("[]") @map("turnos_permitidos")
+  version              BigInt         @default(1)
+  ultimaModificacion   DateTime       @default(now()) @map("ultima_modificacion")
+  sincronizado         Boolean        @default(true)
+  activo               Boolean        @default(true)
+  fechaCreacion        DateTime       @default(now()) @map("fecha_creacion")
+  logActividades       LogActividad[]
+  permisos             Permiso[]
+  sesiones             Sesion[]       @relation("RolActivo")
+  usuarioRoles         UsuarioRol[]
+  usuariosPorDefecto   Usuario[]      @relation("RolPorDefecto")
 
   @@index([prioridadOrden, activo])
   @@index([categoria, area, nivel])
@@ -297,45 +235,30 @@ model Rol {
 }
 
 model UsuarioRol {
-  id        String @id @default(cuid()) @map("id_usuario_rol") @db.VarChar(26)
-  idUsuario String @map("id_usuario") @db.VarChar(26)
-  idRol     String @map("id_rol") @db.VarChar(26)
-
-  // PRIORIDAD Y CONFIGURACIÓN
-  prioridadUsuario Int     @default(1) @map("prioridad_usuario")
-  esRolPrincipal   Boolean @default(false) @map("es_rol_principal")
-
-  // CONTEXTO RESTAURANTE
-  sucursalEspecifica String? @map("sucursal_especifica") @db.VarChar(50)
-  areaEspecifica     String? @map("area_especifica") @db.VarChar(50)
-  estacionTrabajo    String? @map("estacion_trabajo") @db.VarChar(50)
-  turnosAsignados    Json    @default("[]") @map("turnos_asignados")
-
-  // HORARIOS
-  idHorarioEspecifico String? @map("id_horario_especifico") @db.VarChar(26)
-
-  // VIGENCIA
-  fechaInicio DateTime  @map("fecha_inicio") @db.Date
-  fechaFin    DateTime? @map("fecha_fin") @db.Date
-
-  // CONFIGURACIÓN ESPECÍFICA
-  limitesPersonalizados Json @default("{}") @map("limites_personalizados")
-  terminalesAsignadas   Json @default("[]") @map("terminales_asignadas")
-
-  // CAMPOS SINCRONIZACIÓN
-  version            BigInt   @default(1)
-  ultimaModificacion DateTime @default(now()) @map("ultima_modificacion")
-  sincronizado       Boolean  @default(true)
-
-  activo          Boolean  @default(true)
-  fechaAsignacion DateTime @default(now()) @map("fecha_asignacion")
-  autorizadoPor   String?  @map("autorizado_por") @db.VarChar(26)
-
-  // Relaciones
-  usuario           Usuario  @relation(fields: [idUsuario], references: [id])
-  rol               Rol      @relation(fields: [idRol], references: [id])
-  horarioEspecifico Horario? @relation("HorarioEspecifico", fields: [idHorarioEspecifico], references: [id])
-  autorizador       Usuario? @relation("AutorizadoPor", fields: [autorizadoPor], references: [id])
+  id                    String    @id @default(cuid()) @map("id_usuario_rol") @db.VarChar(26)
+  idUsuario             String    @map("id_usuario") @db.VarChar(26)
+  idRol                 String    @map("id_rol") @db.VarChar(26)
+  prioridadUsuario      Int       @default(1) @map("prioridad_usuario")
+  esRolPrincipal        Boolean   @default(false) @map("es_rol_principal")
+  sucursalEspecifica    String?   @map("sucursal_especifica") @db.VarChar(50)
+  areaEspecifica        String?   @map("area_especifica") @db.VarChar(50)
+  estacionTrabajo       String?   @map("estacion_trabajo") @db.VarChar(50)
+  turnosAsignados       Json      @default("[]") @map("turnos_asignados")
+  idHorarioEspecifico   String?   @map("id_horario_especifico") @db.VarChar(26)
+  fechaInicio           DateTime  @map("fecha_inicio") @db.Date
+  fechaFin              DateTime? @map("fecha_fin") @db.Date
+  limitesPersonalizados Json      @default("{}") @map("limites_personalizados")
+  terminalesAsignadas   Json      @default("[]") @map("terminales_asignadas")
+  version               BigInt    @default(1)
+  ultimaModificacion    DateTime  @default(now()) @map("ultima_modificacion")
+  sincronizado          Boolean   @default(true)
+  activo                Boolean   @default(true)
+  fechaAsignacion       DateTime  @default(now()) @map("fecha_asignacion")
+  autorizadoPor         String?   @map("autorizado_por") @db.VarChar(26)
+  autorizador           Usuario?  @relation("AutorizadoPor", fields: [autorizadoPor], references: [id])
+  horarioEspecifico     Horario?  @relation("HorarioEspecifico", fields: [idHorarioEspecifico], references: [id])
+  rol                   Rol       @relation(fields: [idRol], references: [id])
+  usuario               Usuario   @relation(fields: [idUsuario], references: [id])
 
   @@index([idUsuario, prioridadUsuario, activo])
   @@index([idRol, sucursalEspecifica, activo])
@@ -345,35 +268,25 @@ model UsuarioRol {
 }
 
 model Permiso {
-  id             String @id @default(cuid()) @map("id_permiso") @db.VarChar(26)
-  idRol          String @map("id_rol") @db.VarChar(26)
-  idModuloAccion String @map("id_modulo_accion") @db.VarChar(26)
-
-  permitido Boolean @default(true)
-
-  // LIMITACIONES RESTAURANTE
-  limitacionMonetaria  Decimal? @map("limitacion_monetaria") @db.Decimal(10, 2)
-  limitacionHorario    Json     @default("{}") @map("limitacion_horario")
-  limitacionTurno      Json     @default("{}") @map("limitacion_turno")
-  limitacionSucursal   Json     @default("{}") @map("limitacion_sucursal")
-  limitacionTerminal   Json     @default("{}") @map("limitacion_terminal")
-  requiereAutorizacion Boolean  @default(false) @map("requiere_autorizacion")
-
-  // CONDICIONES ESPECÍFICAS RESTAURANTE
-  requiereCaja        Boolean @default(false) @map("requiere_caja")
-  requiereTurnoActivo Boolean @default(false) @map("requiere_turno_activo")
-
-  // CAMPOS SINCRONIZACIÓN
-  version            BigInt   @default(1)
-  ultimaModificacion DateTime @default(now()) @map("ultima_modificacion")
-  sincronizado       Boolean  @default(true)
-
-  activo        Boolean  @default(true)
-  fechaCreacion DateTime @default(now()) @map("fecha_creacion")
-
-  // Relaciones
-  rol          Rol          @relation(fields: [idRol], references: [id])
-  moduloAccion ModuloAccion @relation(fields: [idModuloAccion], references: [id])
+  id                   String       @id @default(cuid()) @map("id_permiso") @db.VarChar(26)
+  idRol                String       @map("id_rol") @db.VarChar(26)
+  idModuloAccion       String       @map("id_modulo_accion") @db.VarChar(26)
+  permitido            Boolean      @default(true)
+  limitacionMonetaria  Decimal?     @map("limitacion_monetaria") @db.Decimal(10, 2)
+  limitacionHorario    Json         @default("{}") @map("limitacion_horario")
+  limitacionTurno      Json         @default("{}") @map("limitacion_turno")
+  limitacionSucursal   Json         @default("{}") @map("limitacion_sucursal")
+  limitacionTerminal   Json         @default("{}") @map("limitacion_terminal")
+  requiereAutorizacion Boolean      @default(false) @map("requiere_autorizacion")
+  requiereCaja         Boolean      @default(false) @map("requiere_caja")
+  requiereTurnoActivo  Boolean      @default(false) @map("requiere_turno_activo")
+  version              BigInt       @default(1)
+  ultimaModificacion   DateTime     @default(now()) @map("ultima_modificacion")
+  sincronizado         Boolean      @default(true)
+  activo               Boolean      @default(true)
+  fechaCreacion        DateTime     @default(now()) @map("fecha_creacion")
+  moduloAccion         ModuloAccion @relation(fields: [idModuloAccion], references: [id])
+  rol                  Rol          @relation(fields: [idRol], references: [id])
 
   @@unique([idRol, idModuloAccion])
   @@index([permitido, activo])
@@ -383,35 +296,26 @@ model Permiso {
 }
 
 model Sesion {
-  id        String @id @default(cuid()) @map("id_sesion") @db.VarChar(26)
-  idUsuario String @map("id_usuario") @db.VarChar(26)
-  token     String @unique @db.VarChar(255)
-
-  // ROL Y CONTEXTO ACTIVO
-  idRolActivo      String? @map("id_rol_activo") @db.VarChar(26)
-  rolesDisponibles Json    @default("[]") @map("roles_disponibles")
-  contextoActual   Json    @default("{}") @map("contexto_actual")
-
-  // CONTEXTO RESTAURANTE ESPECÍFICO
-  sucursalActual   String? @map("sucursal_actual") @db.VarChar(50)
-  turnoActual      String? @map("turno_actual") @db.VarChar(20)
-  terminalAsignada String? @map("terminal_asignada") @db.VarChar(50)
-  cajaAbierta      Boolean @default(false) @map("caja_abierta")
-
-  // CONFIGURACIÓN DE SESIÓN
-  inicioAutomatico     Boolean   @default(true) @map("inicio_automatico")
-  modoOffline          Boolean   @default(false) @map("modo_offline")
-  ultimaSincronizacion DateTime? @map("ultima_sincronizacion")
-
-  fechaInicio          DateTime  @default(now()) @map("fecha_inicio")
-  fechaExpira          DateTime? @map("fecha_expira")
-  fechaUltimaActividad DateTime  @default(now()) @map("fecha_ultima_actividad")
-  activa               Boolean   @default(true)
-
-  // Relaciones
-  usuario        Usuario        @relation(fields: [idUsuario], references: [id])
-  rolActivo      Rol?           @relation("RolActivo", fields: [idRolActivo], references: [id])
-  logActividades LogActividad[]
+  id                   String         @id @default(cuid()) @map("id_sesion") @db.VarChar(26)
+  idUsuario            String         @map("id_usuario") @db.VarChar(26)
+  token                String         @unique @db.VarChar(255)
+  idRolActivo          String?        @map("id_rol_activo") @db.VarChar(26)
+  rolesDisponibles     Json           @default("[]") @map("roles_disponibles")
+  contextoActual       Json           @default("{}") @map("contexto_actual")
+  sucursalActual       String?        @map("sucursal_actual") @db.VarChar(50)
+  turnoActual          String?        @map("turno_actual") @db.VarChar(20)
+  terminalAsignada     String?        @map("terminal_asignada") @db.VarChar(50)
+  cajaAbierta          Boolean        @default(false) @map("caja_abierta")
+  inicioAutomatico     Boolean        @default(true) @map("inicio_automatico")
+  modoOffline          Boolean        @default(false) @map("modo_offline")
+  ultimaSincronizacion DateTime?      @map("ultima_sincronizacion")
+  fechaInicio          DateTime       @default(now()) @map("fecha_inicio")
+  fechaExpira          DateTime?      @map("fecha_expira")
+  fechaUltimaActividad DateTime       @default(now()) @map("fecha_ultima_actividad")
+  activa               Boolean        @default(true)
+  logActividades       LogActividad[]
+  rolActivo            Rol?           @relation("RolActivo", fields: [idRolActivo], references: [id])
+  usuario              Usuario        @relation(fields: [idUsuario], references: [id])
 
   @@index([idUsuario, activa])
   @@index([sucursalActual, turnoActual])
@@ -421,40 +325,27 @@ model Sesion {
 }
 
 model LogActividad {
-  id        String  @id @default(cuid()) @map("id_actividad") @db.VarChar(26)
-  idUsuario String  @map("id_usuario") @db.VarChar(26)
-  idSesion  String? @map("id_sesion") @db.VarChar(26)
-
-  // ACTIVIDAD
-  idModuloAccion String @map("id_modulo_accion") @db.VarChar(26)
-  descripcion    String
-
-  // CONTEXTO RESTAURANTE
-  idRolUtilizado String? @map("id_rol_utilizado") @db.VarChar(26)
-  sucursal       String? @db.VarChar(50)
-  turno          String? @db.VarChar(20)
-  terminal       String? @db.VarChar(50)
-
-  // INFORMACIÓN ESPECÍFICA RESTAURANTE
-  numeroTicket     String?  @map("numero_ticket") @db.VarChar(50)
-  numeroMesa       String?  @map("numero_mesa") @db.VarChar(10)
-  montoTransaccion Decimal? @map("monto_transaccion") @db.Decimal(10, 2)
-  metodoPago       String?  @map("metodo_pago") @db.VarChar(30)
-
-  // RESULTADO
-  resultado String @default("exitoso") @db.VarChar(20)
-
-  // CAMPOS SINCRONIZACIÓN
-  version      BigInt  @default(1)
-  sincronizado Boolean @default(true)
-
-  fechaActividad DateTime @default(now()) @map("fecha_actividad")
-
-  // Relaciones
-  usuario      Usuario      @relation(fields: [idUsuario], references: [id])
-  sesion       Sesion?      @relation(fields: [idSesion], references: [id])
-  moduloAccion ModuloAccion @relation(fields: [idModuloAccion], references: [id])
-  rolUtilizado Rol?         @relation(fields: [idRolUtilizado], references: [id])
+  id               String       @id @default(cuid()) @map("id_actividad") @db.VarChar(26)
+  idUsuario        String       @map("id_usuario") @db.VarChar(26)
+  idSesion         String?      @map("id_sesion") @db.VarChar(26)
+  idModuloAccion   String       @map("id_modulo_accion") @db.VarChar(26)
+  descripcion      String
+  idRolUtilizado   String?      @map("id_rol_utilizado") @db.VarChar(26)
+  sucursal         String?      @db.VarChar(50)
+  turno            String?      @db.VarChar(20)
+  terminal         String?      @db.VarChar(50)
+  numeroTicket     String?      @map("numero_ticket") @db.VarChar(50)
+  numeroMesa       String?      @map("numero_mesa") @db.VarChar(10)
+  montoTransaccion Decimal?     @map("monto_transaccion") @db.Decimal(10, 2)
+  metodoPago       String?      @map("metodo_pago") @db.VarChar(30)
+  resultado        String       @default("exitoso") @db.VarChar(20)
+  version          BigInt       @default(1)
+  sincronizado     Boolean      @default(true)
+  fechaActividad   DateTime     @default(now()) @map("fecha_actividad")
+  moduloAccion     ModuloAccion @relation(fields: [idModuloAccion], references: [id])
+  rolUtilizado     Rol?         @relation(fields: [idRolUtilizado], references: [id])
+  sesion           Sesion?      @relation(fields: [idSesion], references: [id])
+  usuario          Usuario      @relation(fields: [idUsuario], references: [id])
 
   @@index([idUsuario, fechaActividad])
   @@index([numeroTicket, numeroMesa])
@@ -465,37 +356,26 @@ model LogActividad {
 }
 
 model ColaSincronizacion {
-  id        String  @id @default(cuid()) @map("id_cola") @db.VarChar(26)
-  idUsuario String? @map("id_usuario") @db.VarChar(26)
-
-  tipoOperacion TipoOperacion @map("tipo_operacion")
-  tabla         String        @db.VarChar(100)
-  idRegistro    String        @map("id_registro") @db.VarChar(26)
-  datos         Json
-
-  // PRIORIDAD Y CONTEXTO
-  prioridad         Int  @default(1) @db.SmallInt
-  contextoOperacion Json @default("{}") @map("contexto_operacion")
-
-  timestampLocal BigInt               @map("timestamp_local")
-  intentos       Int                  @default(0)
-  estado         EstadoSincronizacion @default(pendiente)
-  errorMessage   String?              @map("error_message")
-
-  fechaCreacion DateTime @default(now()) @map("fecha_creacion")
-
-  // Relaciones
-  usuario Usuario? @relation(fields: [idUsuario], references: [id])
+  id                String               @id @default(cuid()) @map("id_cola") @db.VarChar(26)
+  idUsuario         String?              @map("id_usuario") @db.VarChar(26)
+  tipoOperacion     TipoOperacion        @map("tipo_operacion")
+  tabla             String               @db.VarChar(100)
+  idRegistro        String               @map("id_registro") @db.VarChar(26)
+  datos             Json
+  prioridad         Int                  @default(1) @db.SmallInt
+  contextoOperacion Json                 @default("{}") @map("contexto_operacion")
+  timestampLocal    BigInt               @map("timestamp_local")
+  intentos          Int                  @default(0)
+  estado            EstadoSincronizacion @default(pendiente)
+  errorMessage      String?              @map("error_message")
+  fechaCreacion     DateTime             @default(now()) @map("fecha_creacion")
+  usuario           Usuario?             @relation(fields: [idUsuario], references: [id])
 
   @@index([estado, prioridad, fechaCreacion])
   @@index([tabla, idRegistro])
   @@map("cola_sincronizacion")
   @@schema("rest_test")
 }
-
-// =====================================
-// ENUMS
-// =====================================
 
 enum TipoEmpresa {
   municipal
